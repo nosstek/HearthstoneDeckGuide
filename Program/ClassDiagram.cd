@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="Card">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="Card::CardClass" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Card.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>EABAMAIgAFAAAAAIAAAABAAAAAAACAQAQAAAAABAAAA=</HashCode>
+      <FileName>Card.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CardsCollection" Collapsed="true">
+    <Position X="0.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAIAAQAAAAAAQAACAABAAAAAAAQAAAAAAAAEAAAAA=</HashCode>
+      <FileName>CardsCollection.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Deck" Collapsed="true">
+    <Position X="0.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAEAAAAAAAAAAAAAAAAAAAAQAAABAAAAAAAA=</HashCode>
+      <FileName>CardsCollection.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Curve" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAFAAAAACBAAAAkAAAAABAAAA=</HashCode>
+      <FileName>Curve.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CurveFinder" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEgAAAAAAgAQAAwAAAAAAAAACAAA=</HashCode>
+      <FileName>CurveFinder.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DBConnector" Collapsed="true">
+    <Position X="2.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AKQAAAAAIFAQAAAAABBIQIAAAAAAAAAACQQAAAACAAA=</HashCode>
+      <FileName>DBConnector.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DeckConstructor" Collapsed="true">
+    <Position X="2.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAAAAEAAAAAAEAAAAAAAIAIAQABQCAQA=</HashCode>
+      <FileName>DeckConstructor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Effect">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hAAAIAAYAAgAAEgAAAAABAAAAAAAAQQAAAAAAAAAAQA=</HashCode>
+      <FileName>Effect.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainProgram" Collapsed="true">
+    <Position X="0.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MainProgram.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minion">
+    <Position X="11" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEQAAAAAAAAAgBgDAAAECACAAAAEAAAAAAIAAAAA=</HashCode>
+      <FileName>Minion.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Player" Collapsed="true">
+    <Position X="2.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EBAAAEAAAABAAAAAQCAABAAAAAAAAAQAAAQAAUAAABA=</HashCode>
+      <FileName>Player.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SimpleTable" Collapsed="true">
+    <Position X="0.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEACAAACAAAAAAgAEAAAAkBAEEAAIAAAAAACAABAA=</HashCode>
+      <FileName>Table.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Table" Collapsed="true">
+    <Position X="2.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Table.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Weapon">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>FAAAAAAACAAAAAAQAAAABAgAAAgCAAwCAAEAAAAAAAA=</HashCode>
+      <FileName>Weapon.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="SimpleCard">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAEAAAAAAAAAAAAAACAQAAAAAAAQAA=</HashCode>
+      <FileName>CardsCollection.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="CardType" Collapsed="true">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACQAAAAAAAACAAAAAAAA=</HashCode>
+      <FileName>Card.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CardQuality" Collapsed="true">
+    <Position X="4" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAEAAABAAAAAAAAAAAgAAAAAAEAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Card.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="DeckClass" Collapsed="true">
+    <Position X="4" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAgAAAAEAAAAAAAQAAgABQAAIAAgAAAAAAAAAA=</HashCode>
+      <FileName>CardsCollection.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="EffectType" Collapsed="true">
+    <Position X="7.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAABAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>Effect.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Target" Collapsed="true">
+    <Position X="7.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAACAAAI=</HashCode>
+      <FileName>Effect.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Condition" Collapsed="true">
+    <Position X="7.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Effect.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MinionType" Collapsed="true">
+    <Position X="11" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Minion.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
