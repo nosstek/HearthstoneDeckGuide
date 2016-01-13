@@ -13,7 +13,7 @@ Player::Player(int pid, std::string pname)
 	m_Name = pname;
 }
 
-Player::Player(int pid, std::string pname, CardsCollection pcollection, CardsCollection pdeck)
+Player::Player(int pid, std::string pname, CardsCollection pcollection, int pdeck)
 {
 	m_Id = pid;
 	m_Name = pname;

@@ -26,8 +26,9 @@ public:
 	static bool ImportAllWeaponsFromDatabase();
 	static bool ImportPlayerCollection(Player& p);
 	static bool ImportAllPlayersCollectionsFromDatabase();
+	static bool ImportAllPlayersDecksFromDatabase(); // imports connection form deck_id to player_id
+	static bool ImportAllDecksFromDatabase(); // imports connection form card_id to deck_id
 	static bool ImportAllPlayersFromDatabase();
-	static bool FixAllDataConnections();
 	static bool ImportAllFromDatabase();
 	static bool PostOptimalDeck(int player_id, CardsCollection optimal_deck);
 };

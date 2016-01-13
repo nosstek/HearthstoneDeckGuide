@@ -44,12 +44,19 @@ enum DeckClass
 
 class Deck : public CardsCollection
 {
+public:
+	static std::map<int, Deck> s_AllDecks;
+
 	int m_Id;
-	int m_Name;
+	std::string m_Name;
+	float m_WinRate;
 	DeckClass m_Class;
 public:
 
 	Deck() { m_Collection.clear(); }
+	Deck(int deck_id, std::string name, float win_rate, DeckClass dclass);
 	Deck(CardsCollection cc) { m_Collection = cc.m_Collection; }
 	~Deck() {}
+
+	std::string toString() const;
 };

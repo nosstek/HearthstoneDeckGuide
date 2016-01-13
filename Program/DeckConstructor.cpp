@@ -39,7 +39,7 @@ CardsCollection DeckConstructor::GeneticAlghoritmForDeck()
 	{
 		CardsCollection new_deck = GetRandomDeckFromCollection();
 		double average_result = 0;
-		for (int i = 0, int number_of_repeats = 100; i < number_of_repeats; ++i)
+		for (int i = 0; i < 100; ++i)
 		{
 			m_Table.PlayMatch();
 			average_result;

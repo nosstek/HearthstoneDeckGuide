@@ -1,9 +1,9 @@
-/* Standard C++ includes */
 #include "stdafx.h"
 #include "DBConnector.h"
 
 #include <stdlib.h>
 #include <iostream>
+#include <fstream>
 
 #include <cppconn/driver.h>
 #include <cppconn/exception.h>
@@ -15,27 +15,35 @@
 
 
 using namespace std;
-//using namespace sql;
+using namespace sql;
 
-static std::string DB_URL = "192.168.1.102:3306";
-static std::string DB_USER = "root";
-static std::string DB_PASSWORD = "cokolwiek";
+const static string DB_INFO_FILE_NAME = "dbinfo.txt";
+static ifstream DB_INFO(DB_INFO_FILE_NAME);
+
+static string DB_URL;
+static string DB_USER;
+static string DB_PASSWORD;
+static string DB_NAME;
 
 DBConnector DBConnector::s_DataBaseConnector;
 
 DBConnector::DBConnector()
 {
-	//cout << "DBConnector()" << endl;
+	if (DB_INFO.is_open())
+	{ 
+		getline(DB_INFO, DB_URL);
+		getline(DB_INFO, DB_USER);
+		getline(DB_INFO, DB_PASSWORD);
+		getline(DB_INFO, DB_NAME);
+	}
 
 	try {
-		sql::Driver *driver;
-		/* Create a connection */
+		Driver *driver;
 		driver = get_driver_instance();
 		m_Con = driver->connect("tcp://" + DB_URL, DB_USER, DB_PASSWORD);
-		/* Connect to the MySQL test database */
-		m_Con->setSchema("Hearthstone");
+		m_Con->setSchema(DB_NAME);
 	}
-	catch (sql::SQLException &e) {
+	catch (SQLException &e) {
 		cout << "# ERR: SQLException in " << __FILE__;
 		cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
 		cout << "# ERR: " << e.what();
@@ -48,28 +56,24 @@ DBConnector::DBConnector()
 
 DBConnector::~DBConnector()
 {
-	//cout << "~DBConnector()" << endl;
 	delete m_Con;
 }
 
-sql::ResultSet* DBConnector::ProcessStatement(std::string s)
+ResultSet* DBConnector::ProcessStatement(string s)
 {
 	try {
-		sql::Driver *driver;
-		/* Create a connection */
+		Driver *driver;
 		driver = get_driver_instance();
 		m_Con = driver->connect("tcp://" + DB_URL, DB_USER, DB_PASSWORD);
-		/* Connect to the MySQL test database */
-		m_Con->setSchema("Hearthstone");
+		m_Con->setSchema(DB_NAME);
 
-
-		sql::Statement *stmt;
+		Statement *stmt;
 		stmt = m_Con->createStatement();
-		sql::ResultSet *res;
+		ResultSet *res;
 		res = stmt->executeQuery(s);
 		return res;
 	}
-	catch (sql::SQLException &e) {
+	catch (SQLException &e) {
 		cout << "# ERR: SQLException in " << __FILE__;
 		cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
 		cout << "# ERR: " << e.what();
@@ -83,7 +87,7 @@ bool DBConnector::ImportAllCardsFromDatabase()
 {
 	string s = "SELECT * FROM Card";
 
-	sql::ResultSet* res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
+	ResultSet* res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
 
 	if (!res)
 		return false;
@@ -114,7 +118,7 @@ bool DBConnector::ImportAllEffectsFromDatabase()
 {
 	string s = "SELECT * FROM Effect";
 
-	sql::ResultSet* res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
+	ResultSet* res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
 
 	if (!res)
 		return false;
@@ -143,7 +147,7 @@ bool DBConnector::ImportAllMinionsFromDatabase()
 {
 	string s = "SELECT * FROM Minion";
 
-	sql::ResultSet* res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
+	ResultSet* res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
 
 	if (!res)
 		return false;
@@ -171,7 +175,7 @@ bool DBConnector::ImportAllWeaponsFromDatabase()
 {
 	string s = "SELECT * FROM Weapon";
 
-	sql::ResultSet* res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
+	ResultSet* res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
 
 	if (!res)
 		return false;
@@ -198,9 +202,9 @@ bool DBConnector::ImportAllWeaponsFromDatabase()
 bool DBConnector::ImportPlayerCollection(Player& p)
 {
 	int player_id = p.m_Id;
-	string s = "SELECT `Players_with_cards`.`Card_id`, `Players_with_cards`.`card_quantity` FROM `Players_with_cards` WHERE(`Players_with_cards`.`Player_id` = " + std::to_string(player_id) + ")";
+	string s = "SELECT `Players_with_cards`.`Card_id`, `Players_with_cards`.`card_quantity` FROM `Players_with_cards` WHERE(`Players_with_cards`.`Player_id` = " + to_string(player_id) + ")";
 
-	sql::ResultSet* res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
+	ResultSet* res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
 
 	if (!res)
 		return false;
@@ -220,8 +224,55 @@ bool DBConnector::ImportPlayerCollection(Player& p)
 
 bool DBConnector::ImportAllPlayersCollectionsFromDatabase()
 {
-	for (std::map<int, Player>::iterator it = Player::s_AllPlayers.begin(); it != Player::s_AllPlayers.end(); ++it)
+	for (map<int, Player>::iterator it = Player::s_AllPlayers.begin(); it != Player::s_AllPlayers.end(); ++it)
 		ImportPlayerCollection(it->second);
+
+	return true;
+}
+
+bool DBConnector::ImportAllPlayersDecksFromDatabase()
+{
+	string s = "SELECT * FROM Deck";
+
+	ResultSet* res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
+
+	if (!res)
+		return false;
+
+	Deck::s_AllDecks.clear();
+	while (res->next())
+	{
+		int deck_id = res->getInt("id");
+		string deck_name = res->getString("name");
+		int player_id = res->getInt("Player_id");
+		int class_id = res->getInt("Class_id");
+		Deck d = Deck(deck_id, deck_name, 0.5, DeckClass(class_id));
+		Deck::s_AllDecks[deck_id] = d;
+		Player::s_AllPlayers[player_id].m_Deck = deck_id;
+	}
+	delete res;
+
+	return true;
+}
+
+bool DBConnector::ImportAllDecksFromDatabase()
+{
+	string s = "SELECT * FROM Decks_with_cards";
+
+	ResultSet* res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
+
+	if (!res)
+		return false;
+
+	while (res->next())
+	{
+		int deck_id = res->getInt("Deck_id");
+		int card_id = res->getInt("Card_id");
+		int card_quantity = res->getInt("card_quantity");
+
+		Deck::s_AllDecks[deck_id].AddCard(card_id, card_quantity);
+	}
+	delete res;
 
 	return true;
 }
@@ -230,7 +281,7 @@ bool DBConnector::ImportAllPlayersFromDatabase()
 {
 	string s = "SELECT * FROM Player";
 
-	sql::ResultSet* res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
+	ResultSet* res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
 
 	if (!res)
 		return false;
@@ -250,11 +301,6 @@ bool DBConnector::ImportAllPlayersFromDatabase()
 	return true;
 }
 
-bool DBConnector::FixAllDataConnections()
-{
-	return true;
-}
-
 bool DBConnector::ImportAllFromDatabase()
 {
 	ImportAllCardsFromDatabase();
@@ -263,8 +309,8 @@ bool DBConnector::ImportAllFromDatabase()
 	ImportAllMinionsFromDatabase();
 	ImportAllPlayersFromDatabase();
 	ImportAllPlayersCollectionsFromDatabase();
-
-	FixAllDataConnections();
+	ImportAllPlayersDecksFromDatabase();
+	ImportAllDecksFromDatabase();
 
 	return true;
 }

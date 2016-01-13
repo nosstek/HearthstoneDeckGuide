@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="dbinfo.txt" />
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>

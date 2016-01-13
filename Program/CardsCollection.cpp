@@ -60,3 +60,20 @@ std::string CardsCollection::toString() const
 
 	return s;
 }
+
+std::map<int, Deck> Deck::s_AllDecks;
+
+Deck::Deck(int deck_id, std::string name, float win_rate, DeckClass dclass)
+{
+	m_Id = deck_id;
+	m_Name = name;
+	m_WinRate = win_rate;
+	m_Class = dclass;
+}
+
+std::string Deck::toString() const
+{
+	std::string s = std::to_string(m_Id) + "\t" + m_Name + "\t" + std::to_string(m_Class) + "\t" + std::to_string(m_WinRate) + "\n";
+
+	return s + __super::toString();
+}

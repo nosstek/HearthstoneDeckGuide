@@ -1,5 +1,3 @@
-// ProjInz00.cpp : Defines the entry point for the console application.
-//
 #pragma once
 
 #include "stdafx.h"
@@ -67,6 +65,16 @@ string DisplayAllWeapons()
 	return s;
 }
 
+string DisplayAllDecks()
+{
+	std::string s;
+	for (std::map<int, Deck>::const_iterator it = Deck::s_AllDecks.begin(); it != Deck::s_AllDecks.end(); ++it)
+		s += it->second.toString();
+
+	return s;
+}
+
+
 void debugtest()
 {
 	cout << DisplayAllCards() << endl;
@@ -74,6 +82,7 @@ void debugtest()
 	cout << DisplayAllEffects() << endl;
 	cout << DisplayAllMinions() << endl;
 	cout << DisplayAllWeapons() << endl;
+	cout << DisplayAllDecks() << endl;
 
 	cout << "Import:\n"
 		<< Card::s_AllCards.size() << " Cards\n"
@@ -81,6 +90,7 @@ void debugtest()
 		<< Effect::s_AllEffects.size() << " Effects\n"
 		<< Minion::s_AllMinions.size() << " Minions\n"
 		<< Weapon::s_AllWeapons.size() << " Weapons\n"
+		<< Deck::s_AllDecks.size() << " Decks\n"
 		<< endl;
 }
 
@@ -98,19 +108,22 @@ void TheMostImportantPart()
 	CardsCollection player_collection = Player::s_AllPlayers[player_id].GetCollection();
 	CardsCollection player_deck = Player::s_AllPlayers[player_id].GetDeck();
 
+	cout << "Collection: " << endl << player_collection.toString() << endl;
+	cout << "Deck: " << endl << player_deck.toString() << endl;
+
 	Curve curv = Curve(player_collection);
 
 	cout << "Collection curve: " << endl << curv.toString() << endl;
 
-	CurveFinder cv = CurveFinder(player_collection);
+	//CurveFinder cv = CurveFinder(player_collection);
 
-	Curve optimal_curve = cv.FindOptimalCurve();
+	//Curve optimal_curve = cv.FindOptimalCurve();
 
-	DeckConstructor db = DeckConstructor(player_collection, optimal_curve);
+	//DeckConstructor db = DeckConstructor(player_collection, optimal_curve);
 
-	CardsCollection optimal_deck = db.FindOptimalDeck();
+	//CardsCollection optimal_deck = db.FindOptimalDeck();
 
-	DBConnector::PostOptimalDeck(player_id, optimal_deck);
+	//DBConnector::PostOptimalDeck(player_id, optimal_deck);
 }
 
 int main()

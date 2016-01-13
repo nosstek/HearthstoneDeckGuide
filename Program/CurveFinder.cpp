@@ -38,7 +38,7 @@ Curve CurveFinder::GeneticAlghoritmForCurve()
 		std::vector<SimpleCard> new_deck = GetRandomDeckFromCollection(m_SimpleCollection);
 
 		double average_result = 0;
-		for (int i = 0, int number_of_repeats = 100; i < number_of_repeats; ++i)
+		for (int i = 0; i < 100; ++i)
 		{
 			m_Table.PlayMatch();
 			average_result;
@@ -48,9 +48,9 @@ Curve CurveFinder::GeneticAlghoritmForCurve()
 			result_deck = new_deck;
 	} while (finish_condition_fulfiled);
 
-	Curve result_curve = Curve(result_deck); 
+	Curve result_curve2 = Curve(result_deck); 
 
-	return result_curve;
+	return result_curve2;
 }
 
 std::vector<SimpleCard> CurveFinder::GetRandomDeckFromCollection(std::vector<SimpleCard> simple_collection)
