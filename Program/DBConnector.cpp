@@ -8,6 +8,7 @@
 #include <cppconn/driver.h>
 #include <cppconn/exception.h>
 #include <cppconn/statement.h>
+#include <cppconn/prepared_statement.h>
 
 #include "Card.h"
 #include "Effect.h"
@@ -82,6 +83,87 @@ ResultSet* DBConnector::ProcessStatement(string s)
 	}
 	return NULL;
 }
+
+ResultSet* DBConnector::ProcessPreparedStatement(std::string s, int deck_id)
+{
+	try {
+		Driver *driver;
+		driver = get_driver_instance();
+		m_Con = driver->connect("tcp://" + DB_URL, DB_USER, DB_PASSWORD);
+		m_Con->setSchema(DB_NAME);
+
+		PreparedStatement *pstmt;
+		pstmt = m_Con->prepareStatement(s);
+		pstmt->setInt(1, deck_id);
+		pstmt->executeUpdate();
+	}
+	catch (SQLException &e) {
+		cout << "# ERR: SQLException in " << __FILE__;
+		cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
+		cout << "# ERR: " << e.what();
+		cout << " (MySQL error code: " << e.getErrorCode();
+		cout << ", SQLState: " << e.getSQLState() << " )" << endl;
+	}
+	return NULL;
+}
+
+ResultSet* DBConnector::ProcessPreparedStatement(std::string s, int deck_id, CardsCollection optimal_deck)
+{
+	try {
+		Driver *driver;
+		driver = get_driver_instance();
+		m_Con = driver->connect("tcp://" + DB_URL, DB_USER, DB_PASSWORD);
+		m_Con->setSchema(DB_NAME);
+
+		PreparedStatement *pstmt;
+		pstmt = m_Con->prepareStatement(s);
+		for (int i = 0; i < optimal_deck.m_Collection.size(); ++i)
+		{
+			map<int, int>::const_iterator it = optimal_deck.m_Collection.begin();
+			advance(it, i);
+
+			pstmt->setInt(1, deck_id);
+			pstmt->setInt(2, it->first);
+			pstmt->setInt(3, it->second);
+			pstmt->executeUpdate();
+		}
+	}
+	catch (SQLException &e) {
+		cout << "# ERR: SQLException in " << __FILE__;
+		cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
+		cout << "# ERR: " << e.what();
+		cout << " (MySQL error code: " << e.getErrorCode();
+		cout << ", SQLState: " << e.getSQLState() << " )" << endl;
+	}
+	return NULL;
+}
+
+ResultSet* DBConnector::ProcessPreparedStatement(string s, string name, int player_id, int class_id)
+{
+	try {
+		Driver *driver;
+		driver = get_driver_instance();
+		m_Con = driver->connect("tcp://" + DB_URL, DB_USER, DB_PASSWORD);
+		m_Con->setSchema(DB_NAME);
+
+		PreparedStatement *pstmt;
+		pstmt = m_Con->prepareStatement(s);
+		pstmt->setString(1, name);
+		pstmt->setInt(2, player_id);
+		pstmt->setInt(3, class_id);
+		pstmt->executeUpdate();
+	}
+	catch (SQLException &e) {
+		cout << "# ERR: SQLException in " << __FILE__;
+		cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
+		cout << "# ERR: " << e.what();
+		cout << " (MySQL error code: " << e.getErrorCode();
+		cout << ", SQLState: " << e.getSQLState() << " )" << endl;
+	}
+	return NULL;
+}
+
+
 
 bool DBConnector::ImportAllCardsFromDatabase()
 {
@@ -239,6 +321,8 @@ bool DBConnector::ImportAllPlayersDecksFromDatabase()
 	if (!res)
 		return false;
 
+	bool first_deck = true;
+
 	Deck::s_AllDecks.clear();
 	while (res->next())
 	{
@@ -248,7 +332,11 @@ bool DBConnector::ImportAllPlayersDecksFromDatabase()
 		int class_id = res->getInt("Class_id");
 		Deck d = Deck(deck_id, deck_name, 0.5, DeckClass(class_id));
 		Deck::s_AllDecks[deck_id] = d;
-		Player::s_AllPlayers[player_id].m_Deck = deck_id;
+		if (first_deck) //HACK: fix first player deck
+		{
+			Player::s_AllPlayers[player_id].m_Deck = deck_id;
+			first_deck = false;
+		}
 	}
 	delete res;
 
@@ -317,8 +405,51 @@ bool DBConnector::ImportAllFromDatabase()
 	return true;
 }
 
-bool DBConnector::PostOptimalDeck(int player_id, CardsCollection optimal_deck)
+bool DBConnector::PostOptimalDeck(int player_id, CardsCollection optimal_deck) //TODO: This is ugly...
 {
+
+	string s = "SELECT * FROM  `Deck` WHERE (`Deck`.`Player_id` = " + to_string(player_id) + " AND `Deck`.`name` = 'GuideDeck')";
+
+	ResultSet* res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
+
+	int deck_id = -1;
+	if (res)
+	{
+		while (res->next())
+			deck_id = res->getInt("id");
+	}
+
+	cout << "DECKID: " << deck_id;
+
+	if (deck_id > 0)
+	{
+		s = "DELETE FROM `Hearthstone`.`Deck` WHERE `Deck`.`id` = ?";
+		DBConnector::s_DataBaseConnector.ProcessPreparedStatement(s, deck_id);
+	}
+
+	{
+		s = "INSERT INTO Deck (name, Player_id, Class_id) VALUES (?, ?, ?)";
+		DBConnector::s_DataBaseConnector.ProcessPreparedStatement(s, "GuideDeck", 1, 1);
+
+		s = "SELECT * FROM  `Deck` WHERE (`Deck`.`Player_id` = " + to_string(player_id) + " AND `Deck`.`name` = 'GuideDeck')";
+
+		res = DBConnector::s_DataBaseConnector.ProcessStatement(s);
+
+		deck_id = -1;
+		if (res)
+		{
+			while (res->next())
+				deck_id = res->getInt("id");
+		}
+
+		cout << "DECKID: " << deck_id;
+
+		s = "INSERT INTO Decks_with_cards (Deck_id, Card_id, card_quantity) VALUES (?, ?, ?)";
+		DBConnector::s_DataBaseConnector.ProcessPreparedStatement(s, deck_id, optimal_deck);
+	}
+
+	delete res;
+
 	return true;
 }
 

@@ -127,7 +127,7 @@ void TheMostImportantPart()
 
 	Deck optimal_deck = dc.FindOptimalDeck();
 
-	DBConnector::PostOptimalDeck(player_id, optimal_deck);
+	DBConnector::PostOptimalDeck(player_id, player_deck);
 }
 
 int main()
