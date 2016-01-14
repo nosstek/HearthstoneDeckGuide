@@ -2,29 +2,25 @@
 
 #include <map>
 #include <vector>
-
-struct SimpleCard
-{
-	int m_BaseCost;
-	int m_Quantity;
-	int m_Overload;
-	int m_DrawCard;
-	SimpleCard(int base_cost, int quantity, int overload, int draw_card) { m_BaseCost = base_cost; m_Quantity = quantity; m_Overload = overload; m_DrawCard = draw_card; }
-};
+#include <random>
 
 class CardsCollection
 {
 public:
 	std::map<int, int> m_Collection;
+
+	std::mt19937_64 m_RandomMachine;
+
 public:
 	CardsCollection();
 	virtual ~CardsCollection();
 
 	bool AddCard(int id, int quantity = 1);
 	bool RemoveCard(int id, int quantity = 1);
+	int GetRandomCard();
+	
 
 	std::map<int, int> GetCollection() { return m_Collection; }
-	std::vector<SimpleCard> GetSimpleCollection();
 
 	std::string toString() const;
 };
@@ -58,5 +54,6 @@ public:
 	Deck(CardsCollection cc) { m_Collection = cc.m_Collection; }
 	~Deck() {}
 
+	static Deck GetRandomDeckFromCollection(CardsCollection collection, DeckClass dclass = druid);
 	std::string toString() const;
 };

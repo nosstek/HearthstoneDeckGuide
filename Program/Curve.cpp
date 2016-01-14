@@ -18,17 +18,6 @@ void Curve::SumUpForCurve(CardsCollection collection)
 	}
 }
 
-void Curve::SumUpForCurve(std::vector<SimpleCard> simple_collection)
-{
-	m_Curve.clear();
-
-	for (int i = 0; i < simple_collection.size(); ++i)
-	{
-		int cost = simple_collection[i].m_BaseCost;
-		m_Curve[cost] += simple_collection[i].m_Quantity;
-	}
-}
-
 double Curve::GetUsabilityFactor(int turn)
 {
 	double result = 0;
@@ -40,6 +29,8 @@ double Curve::GetUsabilityFactor(int turn)
 	}
 
 	return result;
+
+	//TODO: fix for 0
 }
 
 Curve::~Curve()

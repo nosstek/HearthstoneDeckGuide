@@ -312,6 +312,8 @@ bool DBConnector::ImportAllFromDatabase()
 	ImportAllPlayersDecksFromDatabase();
 	ImportAllDecksFromDatabase();
 
+	
+
 	return true;
 }
 

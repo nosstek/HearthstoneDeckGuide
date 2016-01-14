@@ -5,6 +5,8 @@
 
 #include "Curve.h"
 
+using namespace std;
+
 SimpleTable::SimpleTable()
 {
 }
@@ -17,61 +19,75 @@ void SimpleTable::initialize()
 {
 	m_Result.clear();
 	m_Turn = 0;
-
-	m_SimpleDeck.clear();
-	m_SimpleDeck = m_PlayerDeck.GetSimpleCollection();
-	m_SimpleHand.clear();
-
-	std::random_device rd;
-	m_RandomMachine = std::mt19937_64(rd());
+	random_device rd;
+	m_RandomMachine = mt19937_64(rd());
 }
 
 bool SimpleTable::FlipTheCoin()
 {
-	std::uniform_real_distribution<double> dist(0.0, 1.0);
-	return dist(m_RandomMachine) > 0.5 ? true : false;
+	return false;
 }
 
 void SimpleTable::StartGame()
 {
 	m_ImFirst = FlipTheCoin();
-	int draw_first_cards = m_ImFirst ? 3 : 4;
+	int draw_first_cards = m_ImFirst ? 4 : 3;
 
 	for (int i = 0; i < draw_first_cards; ++i)
 	{
-		std::uniform_int_distribution<int> dist(0, m_SimpleDeck.size());
-		int rand = dist(m_RandomMachine);
-		m_SimpleHand.push_back(m_SimpleDeck[rand]);
-		//m_SimpleDeck.erase(m_SimpleDeck.begin() + rand);
+		int rc = m_PlayerDeck.GetRandomCard();
 		
+		m_PlayerHand.AddCard(rc);
+		m_PlayerDeck.RemoveCard(rc);
 	}
-	Curve cv = Curve(m_SimpleHand);
-	std::cout << "Starting hand: " << std::endl << cv.toString() << std::endl;
 
-	//if (!m_ImFirst) AddCoinToHand();
-
+	//TODO: if (!m_ImFirst) AddCoinToHand();
 }
 
 void SimpleTable::PlayMatch()
 {
+	std::cout << "Playing on the table\n";
 	initialize();
 
 	StartGame();
 
 	for (int i = 1; i < 10; ++i)
 	{
-		std::uniform_int_distribution<int> dist(0, m_SimpleDeck.size());
-		int rand = dist(m_RandomMachine);
-		m_SimpleHand.push_back(m_SimpleDeck[rand]);
-		//m_SimpleDeck.erase(m_SimpleDeck.begin() + rand);
-		Curve cv = Curve(m_SimpleHand);
+		int rc = m_PlayerDeck.GetRandomCard();
+
+		m_PlayerHand.AddCard(rc);
+		m_PlayerDeck.RemoveCard(rc);
+
+		Curve cv = Curve(m_PlayerHand);
 		m_Result[i] = cv.GetUsabilityFactor(i);
 
-		std::cout.precision(10);
-		std::cout << "Turn " << i << ": " << std::fixed << cv.GetUsabilityFactor(i) << std::endl << cv.toString() << std::endl;
+		//TODO: Play card
+
+		//TODO: Card effects
+
+		//TODO: Hero ability
+
+		std::cout.precision(5);
+		std::cout << "Turn " << i << ": " << std::fixed << m_Result[i] << std::endl << cv.toString() << std::endl;
 	}
 }
 
+std::string SimpleTable::toStringResult()
+{
+	std::string s;
+	for (map<int, double>::const_iterator it = m_Result.begin(); it != m_Result.end(); ++it)
+		s += std::to_string(it->first) + "\t" + to_string(it->second) + "\n";
+
+	return s;
+}
+
+double SimpleTable::SummaryResult()
+{
+	double result = 0;
+	for (map<int, double>::const_iterator it = m_Result.begin(); it != m_Result.end(); ++it)
+		result += it->second;
+	return result;
+}
 
 Table::Table()
 {
@@ -81,4 +97,5 @@ Table::~Table()
 {
 }
 
+//TODO: Big table!
 

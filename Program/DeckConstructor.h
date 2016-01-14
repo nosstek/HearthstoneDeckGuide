@@ -7,22 +7,20 @@
 
 class DeckConstructor
 {
+public:
 	CardsCollection m_PlayerCollection;
-	CardsCollection m_PlayerDeck;
-	CardsCollection m_EnemyDeck;
+	Deck m_PlayerDeck;
 	Curve m_OptimalCurve;
 
 	Table m_Table;
 
 public:
 	DeckConstructor();
-	DeckConstructor(CardsCollection user_collection, Curve optimal_curve);
-	DeckConstructor(CardsCollection player_collection, CardsCollection player_deck, Curve optimal_curve, CardsCollection enemy_deck);
+	DeckConstructor(CardsCollection player_collection);
 	
 	virtual ~DeckConstructor();
 
-	CardsCollection FindOptimalDeck();
-	CardsCollection GeneticAlghoritmForDeck();
-	CardsCollection GetRandomDeckFromCollection();
+	Deck FindOptimalDeck();
+	Deck GeneticAlghoritmForDeck();
 };
 

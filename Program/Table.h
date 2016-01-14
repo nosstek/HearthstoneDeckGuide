@@ -7,11 +7,9 @@
 
 class SimpleTable
 {
-private:
-	std::vector<SimpleCard> m_SimpleDeck;
-	std::vector<SimpleCard> m_SimpleHand;
-
+public:
 	Deck m_PlayerDeck;
+	CardsCollection m_PlayerHand;
 
 	int m_Turn;
 
@@ -32,11 +30,19 @@ public:
 	void StartGame();
 
 	void PlayMatch();
+
+	std::string toStringResult();
+
+	double SummaryResult();
 };
 
 
 class Table : public SimpleTable
 {
+	Table(Deck player_deck, Deck enemy_deck) { m_PlayerDeck = player_deck; m_EnemyDeck = enemy_deck; }
+
+	Deck m_EnemyDeck;
+	CardsCollection m_EnemyHand;
 public:
 	Table();
 	~Table();
