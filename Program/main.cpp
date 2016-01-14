@@ -17,6 +17,8 @@
 
 #include "DBConnector.h"
 
+#define DEBUG_INFO false
+
 using namespace std;
 
 string DisplayAllCards()
@@ -73,15 +75,27 @@ string DisplayAllDecks()
 	return s;
 }
 
+string DisplayAllPlayerDecks(int player_id)
+{
+	Player p = Player::s_AllPlayers[player_id];
+	string s;
+
+	for (map<int, string>::const_iterator it = p.m_Deck.begin(); it != p.m_Deck.end(); ++it)
+		s += Deck::s_AllDecks[it->first].toString();
+
+	return s;
+}
+
 void debugtest()
 {
-	cout << "All Cards:\n" << DisplayAllCards() << endl;
-	cout << "All Players:\n" << DisplayAllPlayers() << endl;
-	cout << "All Effects:\n" << DisplayAllEffects() << endl;
-	cout << "All Minions:\n" << DisplayAllMinions() << endl;
-	cout << "All Weapons:\n" << DisplayAllWeapons() << endl;
-	cout << "All Decks:\n" << DisplayAllDecks() << endl;
-
+	if (DEBUG_INFO) {
+		cout << "All Cards:\n" << DisplayAllCards() << endl;
+		cout << "All Players:\n" << DisplayAllPlayers() << endl;
+		cout << "All Effects:\n" << DisplayAllEffects() << endl;
+		cout << "All Minions:\n" << DisplayAllMinions() << endl;
+		cout << "All Weapons:\n" << DisplayAllWeapons() << endl;
+		cout << "All Decks:\n" << DisplayAllDecks() << endl;
+	}
 	cout << "Import summary:\n"
 		<< Card::s_AllCards.size() << "\tCards\n"
 		<< Player::s_AllPlayers.size() << "\tPlayers\n"
@@ -99,12 +113,29 @@ void initialize()
 	DBConnector::ImportAllFromDatabase();
 }
 
-void TheMostImportantPart()
+int ChoosePlayer()
 {
-	int player_id = 1;
-	
+	cout << "All Players:\n" << DisplayAllPlayers() << endl;
+
+	cout << "Choose player by id: ";
+	int player_id;
+	cin >> player_id;
+	return player_id;
+}
+
+int ChooseDeck(int player_id)
+{
+	cout << "All player's decks:\n" << DisplayAllPlayerDecks(player_id) << endl;
+	cout << "Choose deck by id: ";
+	int deck_id;
+	cin >> deck_id;
+	return deck_id;
+}
+
+void TheMostImportantPart(int player_id, int deck_id)
+{	
 	CardsCollection player_collection = Player::s_AllPlayers[player_id].GetCollection();
-	CardsCollection player_deck = Player::s_AllPlayers[player_id].GetDeck();
+	CardsCollection player_deck = Player::s_AllPlayers[player_id].GetDeck(); //TODO: Select from all players decks
 
 	cout << "Collection: " << endl << player_collection.toString() << endl;
 	cout << "Deck: " << endl << player_deck.toString() << endl;
@@ -116,7 +147,7 @@ void TheMostImportantPart()
 	cout << "Deck curve: " << endl << deck_curve.toString() << endl;
 
 	DeckConstructor dc = DeckConstructor(player_collection);
-	bool find_curve = true;
+	bool find_curve = false;
 	if (find_curve)
 	{
 		CurveFinder cv = CurveFinder(player_collection, player_deck);
@@ -138,7 +169,10 @@ int main()
 
 	debugtest();
 
-	TheMostImportantPart();
+	int player_id = ChoosePlayer();
+	int deck_id = ChooseDeck(player_id);
+
+	TheMostImportantPart(player_id, deck_id);
 
 	system("pause");
 

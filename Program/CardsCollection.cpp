@@ -94,7 +94,7 @@ Deck::Deck(int deck_id, std::string name, float win_rate, DeckClass dclass)
 	m_Class = dclass;
 }
 
-Deck Deck::GetRandomDeckFromCollection(CardsCollection collection, DeckClass dclass)
+Deck Deck::GetRandomDeckFromCollection(CardsCollection collection, DeckClass dclass) //TODO: deck class!
 {
 	int target_cards_count = 5;
 	CardsCollection random_deck;

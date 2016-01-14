@@ -321,7 +321,7 @@ bool DBConnector::ImportAllPlayersDecksFromDatabase()
 	if (!res)
 		return false;
 
-	bool first_deck = true;
+
 
 	Deck::s_AllDecks.clear();
 	while (res->next())
@@ -332,11 +332,7 @@ bool DBConnector::ImportAllPlayersDecksFromDatabase()
 		int class_id = res->getInt("Class_id");
 		Deck d = Deck(deck_id, deck_name, 0.5, DeckClass(class_id));
 		Deck::s_AllDecks[deck_id] = d;
-		if (first_deck) //HACK: fix first player deck
-		{
-			Player::s_AllPlayers[player_id].m_Deck = deck_id;
-			first_deck = false;
-		}
+		Player::s_AllPlayers[player_id].m_Deck[deck_id] = deck_name;
 	}
 	delete res;
 
@@ -429,7 +425,7 @@ bool DBConnector::PostOptimalDeck(int player_id, CardsCollection optimal_deck) /
 
 	{
 		s = "INSERT INTO Deck (name, Player_id, Class_id) VALUES (?, ?, ?)";
-		DBConnector::s_DataBaseConnector.ProcessPreparedStatement(s, "GuideDeck", 1, 1);
+		DBConnector::s_DataBaseConnector.ProcessPreparedStatement(s, "GuideDeck", player_id, 1);
 
 		s = "SELECT * FROM  `Deck` WHERE (`Deck`.`Player_id` = " + to_string(player_id) + " AND `Deck`.`name` = 'GuideDeck')";
 
