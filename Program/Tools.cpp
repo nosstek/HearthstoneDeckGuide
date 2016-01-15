@@ -1,10 +1,33 @@
 #include "stdafx.h"
 #include "Tools.h"
 #include <iostream>
-
-#include "CardsCollection.h"
+#include <fstream>
+#include <string>
+#include <random>
 
 #define DEBUG_INFO false
+
+#define COIN_ID 16
+
+using namespace std;
+
+void Tools::initialize()
+{
+	random_device rd;
+	m_RandomMachine = mt19937_64(rd());
+}
+
+void Tools::log(const string & text)
+{
+	ofstream log_file("log_file.txt", ios_base::out | ios_base::app);
+	log_file << text << endl;
+}
+
+void Tools::ClearLogFile()
+{
+	ofstream log_file("log_file.txt");
+	log_file.clear();
+}
 
 int Tools::MoveCardFromCollectionToCollection(CardsCollection* from_collection, CardsCollection* to_collection, int card_id)
 {
@@ -27,11 +50,25 @@ Deck Tools::GetRandomDeckFromCollection(CardsCollection collection, DeckClass dc
 
 	for (int cards_count = 0; cards_count != target_cards_count && !collection.m_Collection.empty(); ++cards_count)
 	{
-		if (DEBUG_INFO) { std::cout << "Getting #" << cards_count << " random card\n"; }
+		if (DEBUG_INFO) { cout << "Getting #" << cards_count << " random card\n"; }
 		Tools::MoveCardFromCollectionToCollection(&collection, &random_deck);
 	}
 	return random_deck;
 }
+
+bool Tools::FlipTheCoin()
+{
+	uniform_int_distribution<int> dist(0, 1);
+	int rand = dist(m_RandomMachine);
+	return rand;
+}
+
+void Tools::AddCoinToCollection(CardsCollection * to_collection)
+{
+	to_collection->AddCard(COIN_ID);
+}
+
+std::mt19937_64 Tools::m_RandomMachine;
 
 Tools::Tools()
 {

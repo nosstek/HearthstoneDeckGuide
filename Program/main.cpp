@@ -5,6 +5,7 @@
 #include <vector>
 #include <random>
 
+#include "Tools.h"
 #include "Card.h"
 #include "Effect.h"
 #include "Player.h"
@@ -108,6 +109,8 @@ void debugtest()
 
 void initialize()
 {
+	Tools::initialize();
+
 	DBConnector::s_DataBaseConnector = DBConnector();
 
 	DBConnector::ImportAllFromDatabase();
