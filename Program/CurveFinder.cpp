@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <iostream>
 
+#include "Tools.h"
 #include "CurveFinder.h"
 #include "Card.h"
 
@@ -38,13 +39,13 @@ Curve CurveFinder::FindOptimalCurve()
 Curve CurveFinder::GeneticAlghoritmForCurve()
 {
 	if (DEBUG_INFO) { std::cout << "Getting random deck\n"; }
-	Deck new_deck = Deck::GetRandomDeckFromCollection(m_Collection);
+	Deck new_deck = Tools::GetRandomDeckFromCollection(m_Collection);
 
 	SimpleTable t = SimpleTable(new_deck);
 	
 	t.PlayMatch();
 
-	std::cout << t.toStringResult() << std::endl << t.SummaryResult() << std::endl;
+	std::cout << t.toStringResult(t.m_PlayerResult) << std::endl << t.SummaryResult(t.m_PlayerResult) << std::endl;
 
 	Curve result_curve = Curve(new_deck);
 

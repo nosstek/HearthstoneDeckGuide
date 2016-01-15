@@ -19,9 +19,9 @@ public:
 	~DBConnector();
 
 	sql::ResultSet* ProcessStatement(std::string s);
-	sql::ResultSet* ProcessPreparedStatement(std::string s, int deck_id);
-	sql::ResultSet* ProcessPreparedStatement(std::string s, int deck_id, CardsCollection optimal_deck);
-	sql::ResultSet* ProcessPreparedStatement(std::string s, std::string name, int player_id, int class_id);
+	sql::ResultSet* ProcessPreparedStatement(std::string s, int deck_id); //TODO: This is ugly
+	sql::ResultSet* ProcessPreparedStatement(std::string s, int deck_id, CardsCollection optimal_deck);  //TODO: This is ugly
+	sql::ResultSet* ProcessPreparedStatement(std::string s, std::string name, int player_id, int class_id); //TODO: This is ugly
 
 	static bool ImportAllCardsFromDatabase();
 	static bool ImportAllEffectsFromDatabase();

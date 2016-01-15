@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <iostream>
 
+#include "Tools.h"
 #include "CardsCollection.h"
 #include "Card.h"
 
@@ -75,11 +76,19 @@ int CardsCollection::GetRandomCard()
 	return it->first;
 }
 
-std::string CardsCollection::toString() const
+int CardsCollection::GetCardsCount()
 {
-	string s;
+	int cards_count = 0;
 	for (map<int, int>::const_iterator it = m_Collection.begin(); it != m_Collection.end(); ++it)
-		s += to_string(it->first) + "\t" + to_string(it->second) + "\n";
+		cards_count += it->second;
+	return cards_count;
+}
+
+std::string CardsCollection::toString(bool with_cards_details) const
+{
+	string s = "id\tbc\tname\n";
+	for (map<int, int>::const_iterator it = m_Collection.begin(); it != m_Collection.end(); ++it)
+		s += (with_cards_details ? Card::s_AllCards[it->first].toString() : to_string(it->first)) + "\t\tx" + to_string(it->second) + "\n";
 
 	return s;
 }
@@ -92,22 +101,6 @@ Deck::Deck(int deck_id, std::string name, float win_rate, DeckClass dclass)
 	m_Name = name;
 	m_WinRate = win_rate;
 	m_Class = dclass;
-}
-
-Deck Deck::GetRandomDeckFromCollection(CardsCollection collection, DeckClass dclass) //TODO: deck class!
-{
-	int target_cards_count = 5;
-	CardsCollection random_deck;
-
-	for (int cards_count = 0; cards_count != target_cards_count && !collection.m_Collection.empty(); ++cards_count)
-	{
-		if (DEBUG_INFO) { std::cout << "Getting #" << cards_count << " random card\n"; }
-		int random_card = collection.GetRandomCard();
-
-		random_deck.AddCard(random_card);
-		collection.RemoveCard(random_card);
-	}
-	return random_deck;
 }
 
 string Deck::toString() const

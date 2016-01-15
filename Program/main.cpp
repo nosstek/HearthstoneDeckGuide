@@ -135,7 +135,7 @@ int ChooseDeck(int player_id)
 void TheMostImportantPart(int player_id, int deck_id)
 {	
 	CardsCollection player_collection = Player::s_AllPlayers[player_id].GetCollection();
-	CardsCollection player_deck = Player::s_AllPlayers[player_id].GetDeck(); //TODO: Select from all players decks
+	Deck player_deck = Deck::s_AllDecks[deck_id];
 
 	cout << "Collection: " << endl << player_collection.toString() << endl;
 	cout << "Deck: " << endl << player_deck.toString() << endl;
@@ -146,7 +146,7 @@ void TheMostImportantPart(int player_id, int deck_id)
 	Curve deck_curve = Curve(player_deck);
 	cout << "Deck curve: " << endl << deck_curve.toString() << endl;
 
-	DeckConstructor dc = DeckConstructor(player_collection);
+	DeckConstructor dc = DeckConstructor(player_collection, player_deck);
 	bool find_curve = false;
 	if (find_curve)
 	{
@@ -169,10 +169,10 @@ int main()
 
 	debugtest();
 
-	int player_id = ChoosePlayer();
-	int deck_id = ChooseDeck(player_id);
+// 	int player_id = ChoosePlayer();
+// 	int deck_id = ChooseDeck(player_id);
 
-	TheMostImportantPart(player_id, deck_id);
+	TheMostImportantPart(1, 29);
 
 	system("pause");
 

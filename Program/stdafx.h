@@ -10,6 +10,6 @@
 #include <stdio.h>
 #include <tchar.h>
 
-
+#define FORCE_DEBUG_INFO false
 
 // TODO: reference additional headers your program requires here

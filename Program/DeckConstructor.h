@@ -17,6 +17,7 @@ public:
 public:
 	DeckConstructor();
 	DeckConstructor(CardsCollection player_collection);
+	DeckConstructor(CardsCollection player_collection, Deck player_deck);
 	
 	virtual ~DeckConstructor();
 

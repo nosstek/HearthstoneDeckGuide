@@ -18,11 +18,12 @@ public:
 	bool AddCard(int id, int quantity = 1);
 	bool RemoveCard(int id, int quantity = 1);
 	int GetRandomCard();
-	
+
+	int GetCardsCount();
 
 	std::map<int, int> GetCollection() { return m_Collection; }
 
-	std::string toString() const;
+	std::string toString(bool with_cards_details = false) const;
 };
 
 enum DeckClass
@@ -54,6 +55,5 @@ public:
 	Deck(CardsCollection cc) { m_Collection = cc.m_Collection; }
 	~Deck() {}
 
-	static Deck GetRandomDeckFromCollection(CardsCollection collection, DeckClass dclass = druid);
 	std::string toString() const;
 };

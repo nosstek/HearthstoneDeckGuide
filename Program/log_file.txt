@@ -1,0 +1,366 @@
+I'm second
+Draw player's starting hand
+Cards draw:
+10	6	Boulderfist Ogre
+
+6	5	Assassinate
+
+2	2	Arcane Explosion
+
+6	5	Assassinate
+
+Draw enemy's starting hand
+Cards draw:
+3	3	Arcane Intellect
+
+4	1	Arcane Missiles
+
+2	2	Arcane Explosion
+
+Turn: 1 ###############################
+Enemy's turn -------------------------------------
+1 action point(s)
+Card draw: 10	6	Boulderfist Ogre
+
+Hand: 0Cards
+id	bc	name
+2	2	Arcane Explosion
+		x1
+3	3	Arcane Intellect
+		x1
+4	1	Arcane Missiles
+		x1
+10	6	Boulderfist Ogre
+		x1
+
+0 action point(s)
+Card played: 4	1	Arcane Missiles
+
+Hand: 0Cards
+id	bc	name
+2	2	Arcane Explosion
+		x1
+3	3	Arcane Intellect
+		x1
+10	6	Boulderfist Ogre
+		x1
+
+Player's turn -------------------------------------
+1 action point(s)
+Card draw: 3	3	Arcane Intellect
+
+Hand: 0Cards
+id	bc	name
+2	2	Arcane Explosion
+		x1
+3	3	Arcane Intellect
+		x1
+6	5	Assassinate
+		x2
+10	6	Boulderfist Ogre
+		x1
+
+Turn: 2 ###############################
+Enemy's turn -------------------------------------
+2 action point(s)
+Card draw: 2	2	Arcane Explosion
+
+Hand: 0Cards
+id	bc	name
+2	2	Arcane Explosion
+		x2
+3	3	Arcane Intellect
+		x1
+10	6	Boulderfist Ogre
+		x1
+
+0 action point(s)
+Card played: 2	2	Arcane Explosion
+
+Hand: 0Cards
+id	bc	name
+2	2	Arcane Explosion
+		x1
+3	3	Arcane Intellect
+		x1
+10	6	Boulderfist Ogre
+		x1
+
+Player's turn -------------------------------------
+2 action point(s)
+Card draw: No card draw
+Hand: 0Cards
+id	bc	name
+2	2	Arcane Explosion
+		x1
+3	3	Arcane Intellect
+		x1
+6	5	Assassinate
+		x2
+10	6	Boulderfist Ogre
+		x1
+
+0 action point(s)
+Card played: 2	2	Arcane Explosion
+
+Hand: 0Cards
+id	bc	name
+3	3	Arcane Intellect
+		x1
+6	5	Assassinate
+		x2
+10	6	Boulderfist Ogre
+		x1
+
+Turn: 3 ###############################
+Enemy's turn -------------------------------------
+3 action point(s)
+Card draw: 4	1	Arcane Missiles
+
+Hand: 0Cards
+id	bc	name
+2	2	Arcane Explosion
+		x1
+3	3	Arcane Intellect
+		x1
+4	1	Arcane Missiles
+		x1
+10	6	Boulderfist Ogre
+		x1
+
+0 action point(s)
+Card played: 3	3	Arcane Intellect
+
+Hand: 0Cards
+id	bc	name
+2	2	Arcane Explosion
+		x1
+4	1	Arcane Missiles
+		x1
+10	6	Boulderfist Ogre
+		x1
+
+Player's turn -------------------------------------
+3 action point(s)
+Card draw: No card draw
+Hand: 0Cards
+id	bc	name
+3	3	Arcane Intellect
+		x1
+6	5	Assassinate
+		x2
+10	6	Boulderfist Ogre
+		x1
+
+0 action point(s)
+Card played: 3	3	Arcane Intellect
+
+Hand: 0Cards
+id	bc	name
+6	5	Assassinate
+		x2
+10	6	Boulderfist Ogre
+		x1
+
+Turn: 4 ###############################
+Enemy's turn -------------------------------------
+4 action point(s)
+Card draw: 8	1	Blessing of Might
+
+Hand: 0Cards
+id	bc	name
+2	2	Arcane Explosion
+		x1
+4	1	Arcane Missiles
+		x1
+8	1	Blessing of Might
+		x1
+10	6	Boulderfist Ogre
+		x1
+
+2 action point(s)
+Card played: 2	2	Arcane Explosion
+
+Hand: 0Cards
+id	bc	name
+4	1	Arcane Missiles
+		x1
+8	1	Blessing of Might
+		x1
+10	6	Boulderfist Ogre
+		x1
+
+1 action point(s)
+Card played: 4	1	Arcane Missiles
+
+Hand: 0Cards
+id	bc	name
+8	1	Blessing of Might
+		x1
+10	6	Boulderfist Ogre
+		x1
+
+0 action point(s)
+Card played: 8	1	Blessing of Might
+
+Hand: 0Cards
+id	bc	name
+10	6	Boulderfist Ogre
+		x1
+
+Player's turn -------------------------------------
+4 action point(s)
+Card draw: No card draw
+Hand: 0Cards
+id	bc	name
+6	5	Assassinate
+		x2
+10	6	Boulderfist Ogre
+		x1
+
+Turn: 5 ###############################
+Enemy's turn -------------------------------------
+5 action point(s)
+Card draw: 6	5	Assassinate
+
+Hand: 0Cards
+id	bc	name
+6	5	Assassinate
+		x1
+10	6	Boulderfist Ogre
+		x1
+
+0 action point(s)
+Card played: 6	5	Assassinate
+
+Hand: 0Cards
+id	bc	name
+10	6	Boulderfist Ogre
+		x1
+
+Player's turn -------------------------------------
+5 action point(s)
+Card draw: No card draw
+Hand: 0Cards
+id	bc	name
+6	5	Assassinate
+		x2
+10	6	Boulderfist Ogre
+		x1
+
+0 action point(s)
+Card played: 6	5	Assassinate
+
+Hand: 0Cards
+id	bc	name
+6	5	Assassinate
+		x1
+10	6	Boulderfist Ogre
+		x1
+
+Turn: 6 ###############################
+Enemy's turn -------------------------------------
+6 action point(s)
+Card draw: 3	3	Arcane Intellect
+
+Hand: 0Cards
+id	bc	name
+3	3	Arcane Intellect
+		x1
+10	6	Boulderfist Ogre
+		x1
+
+0 action point(s)
+Card played: 10	6	Boulderfist Ogre
+
+Hand: 0Cards
+id	bc	name
+3	3	Arcane Intellect
+		x1
+
+Player's turn -------------------------------------
+6 action point(s)
+Card draw: No card draw
+Hand: 0Cards
+id	bc	name
+6	5	Assassinate
+		x1
+10	6	Boulderfist Ogre
+		x1
+
+0 action point(s)
+Card played: 10	6	Boulderfist Ogre
+
+Hand: 0Cards
+id	bc	name
+6	5	Assassinate
+		x1
+
+Turn: 7 ###############################
+Enemy's turn -------------------------------------
+7 action point(s)
+Card draw: 6	5	Assassinate
+
+Hand: 0Cards
+id	bc	name
+3	3	Arcane Intellect
+		x1
+6	5	Assassinate
+		x1
+
+2 action point(s)
+Card played: 6	5	Assassinate
+
+Hand: 0Cards
+id	bc	name
+3	3	Arcane Intellect
+		x1
+
+Player's turn -------------------------------------
+7 action point(s)
+Card draw: No card draw
+Hand: 0Cards
+id	bc	name
+6	5	Assassinate
+		x1
+
+2 action point(s)
+Card played: 6	5	Assassinate
+
+Hand: 0Cards
+id	bc	name
+
+Turn: 8 ###############################
+Enemy's turn -------------------------------------
+8 action point(s)
+Card draw: No card draw
+Hand: 0Cards
+id	bc	name
+3	3	Arcane Intellect
+		x1
+
+5 action point(s)
+Card played: 3	3	Arcane Intellect
+
+Hand: 0Cards
+id	bc	name
+
+Player's turn -------------------------------------
+8 action point(s)
+Card draw: No card draw
+Hand: 0Cards
+id	bc	name
+
+Turn: 9 ###############################
+Enemy's turn -------------------------------------
+9 action point(s)
+Card draw: No card draw
+Hand: 0Cards
+id	bc	name
+
+Player's turn -------------------------------------
+9 action point(s)
+Card draw: No card draw
+Hand: 0Cards
+id	bc	name
+
