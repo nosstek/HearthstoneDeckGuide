@@ -13,7 +13,7 @@ using namespace std;
 // Logger.
 void log(const std::string &text)
 {
-	Tools::log(text);
+	Tools::ltf(text);
 }
 
 SimpleTable::SimpleTable()
@@ -62,11 +62,7 @@ void SimpleTable::DrawStartingHand(TablePlayer &tplayer, bool am_i_first)
 
 	log("Cards draw:");
 	for (int i = 0; i < draw_first_cards; ++i)
-	{
-		int card_draw = Tools::MoveCardFromCollectionToCollection(&tplayer.m_Deck, &tplayer.m_Hand);
-
-		log(Card::s_AllCards[card_draw].toString());
-	}
+		DrawRandomCardFromDeckToHand(tplayer);
 
 	if (!am_i_first)
 	{
@@ -77,27 +73,27 @@ void SimpleTable::DrawStartingHand(TablePlayer &tplayer, bool am_i_first)
 
 bool SimpleTable::GameEndConditionFulfilled()
 {
-	return m_Turn < 10;
+	return m_Turn > 10;
 }
 
 bool SimpleTable::PlayMatch()
 {
-	std::cout << "Playing on the table\n";
+	if (LOOP_INFO) std::cout << "Playing on the table\n";
 	initialize();
 
 	StartGame();
 
-	for (m_Turn = 1; GameEndConditionFulfilled(); ++m_Turn)
+	for (m_Turn = 1; !GameEndConditionFulfilled(); ++m_Turn)
 	{
-		log("Turn: " + to_string(m_Turn) + " ###############################");
+		if (LOOP_INFO) log("Turn: " + to_string(m_Turn) + " ###############################");
 		PlayTurn(m_Turn);
 	}
-	return true;
+	return m_Player.IamAlive();
 }
 
 void SimpleTable::PlayTurn(int turn)
 {
-	log("Player's turn -------------------------------------" + m_Player.toString());
+	if (LOOP_INFO) log("Player's turn -------------------------------------" + m_Player.toString());
 	PlayTurn(m_Player, turn, m_PlayerResult);
 }
 
@@ -105,22 +101,24 @@ void SimpleTable::PlayTurn(TablePlayer & tplayer, int turn, std::map<int, double
 {
 	{ //Start turn;
 		tplayer.m_ActionPoints = turn;
+		if (LOOP_INFO) log(to_string(tplayer.m_ActionPoints) + " action point(s)");
 
-		int card_draw = Tools::MoveCardFromCollectionToCollection(&tplayer.m_Deck, &tplayer.m_Hand);
+		DrawRandomCardFromDeckToHand(tplayer);
+
+		if (LOOP_INFO) log("Hand: " + to_string(tplayer.m_Hand.GetCardsCount()) + " Cards\n" + tplayer.m_Hand.toString(true));
 
 		{ // Curve statistics
 			Curve cv = Curve(tplayer.m_Hand);
 			result[turn] = cv.GetUsabilityFactor(turn);
-
-			std::cout.precision(5);
-			std::cout << "Turn " << turn << ": " << std::fixed << result[turn] << std::endl << cv.toString() << std::endl;
+			if (LOOP_INFO)
+			{
+				std::cout.precision(5);
+				std::cout << "Turn " << turn << ": " << std::fixed << result[turn] << std::endl << cv.toString() << std::endl;
+			}
 		}
 
-		log(to_string(tplayer.m_ActionPoints) + " action point(s)\nCard draw: " +
-			(card_draw >= 0 ? Card::s_AllCards[card_draw].toString() : "No card draw") +
-			"\nHand: " + to_string(tplayer.m_Hand.GetCardsCount()) + " Cards\n" + tplayer.m_Hand.toString(true));
 	}
-
+	if (!GameEndConditionFulfilled())
 	{ // Choose card
 		for (int card_cost = tplayer.m_ActionPoints; card_cost >= 0; --card_cost)
 		{
@@ -136,9 +134,10 @@ void SimpleTable::PlayTurn(TablePlayer & tplayer, int turn, std::map<int, double
 					tplayer.m_ActionPoints -= card_cost;
 					card_cost = tplayer.m_ActionPoints;
 
-					log(to_string(tplayer.m_ActionPoints) + " action point(s)\nCard played: "
-						+ Card::s_AllCards[card_id_to_play].toString() +
-						"\nHand: " + to_string(tplayer.m_Hand.GetCardsCount()) + " Cards\n" + tplayer.m_Hand.toString(true));
+					if (LOOP_INFO)
+						log(to_string(tplayer.m_ActionPoints) + " action point(s)\nCard played: "
+							+ Card::s_AllCards[card_id_to_play].toString() +
+							"\nHand: " + to_string(tplayer.m_Hand.GetCardsCount()) + " Cards\n" + tplayer.m_Hand.toString(true));
 				}
 				else
 				{
@@ -180,6 +179,16 @@ double SimpleTable::SummaryResult(map<int, double> result)
 	return summary;
 }
 
+void SimpleTable::DrawRandomCardFromDeckToHand(TablePlayer & tplayer)
+{
+	int card_draw = Tools::MoveCardFromCollectionToCollection(&tplayer.m_Deck, &tplayer.m_Hand);
+
+	if (LOOP_INFO) log("Card draw: " +	(card_draw >= 0 ? Card::s_AllCards[card_draw].toString() : "No card draw"));
+
+	if (card_draw == -1)
+		tplayer.TakeFatigueDamage();
+}
+
 Table::Table()
 {
 }
@@ -198,14 +207,13 @@ void Table::initialize()
 
 bool Table::GameEndConditionFulfilled()
 {
-	//TODO: End game condition
-	return __super::GameEndConditionFulfilled();
+	return !m_Player.IamAlive() || !m_Enemy.IamAlive();
 }
 
 void Table::DrawStartingHand()
 {
 	__super::DrawStartingHand();
-	log("Draw enemy's starting hand");
+	if (LOOP_INFO) log("Draw enemy's starting hand");
 	__super::DrawStartingHand(m_Enemy, !m_ImFirst);
 }
 
@@ -214,8 +222,14 @@ void Table::PlayTurn(int turn)
 	if (m_ImFirst)
 		__super::PlayTurn(turn);
 
-	log("Enemy's turn -------------------------------------" + m_Enemy.toString());
+	if (GameEndConditionFulfilled())
+		return;
+
+	if (LOOP_INFO) log("Enemy's turn -------------------------------------" + m_Enemy.toString());
 	__super::PlayTurn(m_Enemy, turn, m_EnemyResult);
+
+	if (GameEndConditionFulfilled())
+		return;
 
 	if (!m_ImFirst)
 		__super::PlayTurn(turn);

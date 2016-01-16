@@ -11,18 +11,6 @@
 
 using namespace std;
 
-CardsCollection::CardsCollection()
-{
-	m_Collection.clear();
-
-	random_device rd;
-	m_RandomMachine = mt19937_64(rd());
-}
-
-CardsCollection::~CardsCollection()
-{
-}
-
 bool CardsCollection::AddCard(int id, int quantity)
 {
 	if (id < 0)
@@ -32,8 +20,13 @@ bool CardsCollection::AddCard(int id, int quantity)
 		return false;
 
 	auto search = m_Collection.find(id);
-	if (search != m_Collection.end() && (search->second + quantity) <= 2)
+	if (search != m_Collection.end())
+	{
+		if ((search->second + quantity) > 2)
+			return false;
+
 		search->second += quantity;
+	}
 	else
 		m_Collection[id] = quantity;
 
@@ -49,14 +42,20 @@ bool CardsCollection::RemoveCard(int id, int quantity)
 		return false;
 
 	auto search = m_Collection.find(id);
-	if (search != m_Collection.end() && (search->second - quantity) >= 0)
+	if (search != m_Collection.end())
 	{
+		if ((search->second - quantity) < 0)
+			return false;
+
 		search->second -= quantity;
+
 		if (search->second == 0)
 			m_Collection.erase(id);
+
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 int CardsCollection::GetRandomCard()
@@ -65,8 +64,7 @@ int CardsCollection::GetRandomCard()
 	if (m_Collection.empty())
 		return -1;
 
-	uniform_int_distribution<int> dist(0, m_Collection.size() - 1);
-	int rand = dist(m_RandomMachine);
+	int rand = Tools::GetRandomInteger(0, m_Collection.size() - 1);
 
 	map<int, int>::const_iterator it = m_Collection.begin();
 	advance(it, rand);
@@ -74,6 +72,21 @@ int CardsCollection::GetRandomCard()
 	if (DEBUG_INFO) { cout << "Random: " << rand << " Card id: " << it->first << endl; }
 
 	return it->first;
+}
+
+bool CardsCollection::AddCollection(CardsCollection ccolection)
+{
+	for (map<int, int>::const_iterator it = ccolection.m_Collection.begin(); it != ccolection.m_Collection.end(); ++it)
+		AddCard(it->first, it->second);
+
+	return true;
+}
+
+bool CardsCollection::RemoveCollection(CardsCollection ccolection)
+{
+	for (map<int, int>::const_iterator it = ccolection.m_Collection.begin(); it != ccolection.m_Collection.end(); ++it)
+		RemoveCard(it->first, it->second);
+	return true;
 }
 
 int CardsCollection::GetCardsCount()
@@ -95,17 +108,55 @@ std::string CardsCollection::toString(bool with_cards_details) const
 
 map<int, Deck> Deck::s_AllDecks;
 
-Deck::Deck(int deck_id, std::string name, float win_rate, DeckClass dclass)
+Deck::Deck(int deck_id, std::string name, DeckClass dclass, int wins, int looses)
 {
 	m_Id = deck_id;
 	m_Name = name;
-	m_WinRate = win_rate;
 	m_Class = dclass;
+
+	m_Wins = wins;
+	m_Looses = looses;
+}
+
+double Deck::GetWinRatio() const 
+{
+	double wins = (double)m_Wins;
+	double looses = (double)m_Looses;
+
+	return wins / (wins + looses);
 }
 
 string Deck::toString() const
 {
-	string s = to_string(m_Id) + "\t" + m_Name + "\t" + to_string(m_Class) + "\t" + to_string(m_WinRate) + "\n";
+	string s = "id: " + to_string(m_Id) + "\tname: " + m_Name + "\tcls: " + to_string(m_Class) + "\twin: " + to_string(m_Wins) + "\tlos: " + to_string(m_Looses) + "\trat: " + to_string(GetWinRatio()) + "\n";
 
 	return s + __super::toString();
+}
+
+DeckWithSupplement::DeckWithSupplement(CardsCollection player_deck, CardsCollection player_collection)
+{
+	m_Collection = player_deck.m_Collection;
+	m_Supplement = Tools::SubtractFromCollectionCollection(player_collection, player_deck);
+}
+
+DeckWithSupplement::DeckWithSupplement(Deck player_deck, CardsCollection deck_supplement)
+{
+	m_Collection = player_deck.m_Collection;
+	m_Supplement = deck_supplement;
+}
+
+bool DeckWithSupplement::AddCard(int id, int quantity)
+{
+	if (__super::AddCard(id, quantity))
+		return m_Supplement.RemoveCard(id, quantity);
+
+	return false;
+}
+
+bool DeckWithSupplement::RemoveCard(int id, int quantity)
+{
+	if (__super::RemoveCard(id, quantity))
+		return m_Supplement.AddCard(id, quantity);
+
+	return false;
 }

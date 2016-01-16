@@ -330,7 +330,7 @@ bool DBConnector::ImportAllPlayersDecksFromDatabase()
 		string deck_name = res->getString("name");
 		int player_id = res->getInt("Player_id");
 		int class_id = res->getInt("Class_id");
-		Deck d = Deck(deck_id, deck_name, 0.5, DeckClass(class_id));
+		Deck d = Deck(deck_id, deck_name, DeckClass(class_id));
 		Deck::s_AllDecks[deck_id] = d;
 		Player::s_AllPlayers[player_id].m_Deck[deck_id] = deck_name;
 	}

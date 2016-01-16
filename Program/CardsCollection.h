@@ -8,22 +8,22 @@ class CardsCollection
 {
 public:
 	std::map<int, int> m_Collection;
-
-	std::mt19937_64 m_RandomMachine;
-
 public:
-	CardsCollection();
-	virtual ~CardsCollection();
+	CardsCollection() { m_Collection.clear(); }
+	virtual ~CardsCollection() {}
 
-	bool AddCard(int id, int quantity = 1);
-	bool RemoveCard(int id, int quantity = 1);
+	virtual bool AddCard(int id, int quantity = 1);
+	virtual bool RemoveCard(int id, int quantity = 1);
 	int GetRandomCard();
 
 	int GetCardsCount();
 
+	bool AddCollection(CardsCollection ccolection);
+	bool RemoveCollection(CardsCollection ccolection);
 	std::map<int, int> GetCollection() { return m_Collection; }
 
 	std::string toString(bool with_cards_details = false) const;
+
 };
 
 enum DeckClass
@@ -44,16 +44,36 @@ class Deck : public CardsCollection
 public:
 	static std::map<int, Deck> s_AllDecks;
 
+public:
 	int m_Id;
 	std::string m_Name;
-	float m_WinRate;
 	DeckClass m_Class;
+
+	int m_Wins;
+	int m_Looses;
+
 public:
 
 	Deck() { m_Collection.clear(); }
-	Deck(int deck_id, std::string name, float win_rate, DeckClass dclass);
+	Deck(int deck_id, std::string name, DeckClass dclass, int wins = 0, int looses = 0);
 	Deck(CardsCollection cc) { m_Collection = cc.m_Collection; }
 	~Deck() {}
 
+	double GetWinRatio() const;
+
 	std::string toString() const;
+};
+
+class DeckWithSupplement : public Deck
+{
+public:
+	CardsCollection m_Supplement;
+public:
+	DeckWithSupplement() {};
+	DeckWithSupplement(CardsCollection player_deck, CardsCollection player_collection);
+	DeckWithSupplement(Deck player_deck, CardsCollection deck_supplement);
+	~DeckWithSupplement() {};
+
+	bool AddCard(int id, int quantity = 1) override;
+	bool RemoveCard(int id, int quantity = 1) override;
 };

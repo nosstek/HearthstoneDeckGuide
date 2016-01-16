@@ -39,8 +39,11 @@ public:
 	static std::string toStringResult(std::map<int, double> result);
 
 	static double SummaryResult(std::map<int, double> result);
-};
 
+	//Game effects mechanics
+
+	void DrawRandomCardFromDeckToHand(TablePlayer &tplayer);
+};
 
 class Table : public SimpleTable
 {

@@ -28,6 +28,10 @@ public:
 
 	void initialize();
 
+	bool IamAlive() { return m_Health > 0; }
+	bool TakeDamage(int dmg);
+	bool TakeFatigueDamage();
+
 	std::string toString();
 };
 

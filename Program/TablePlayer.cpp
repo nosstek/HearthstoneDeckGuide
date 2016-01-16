@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "TablePlayer.h"
+#include "Tools.h"
 
 #include <string>
 
@@ -25,6 +26,32 @@ void TablePlayer::initialize()
 	m_TimesUsedAbility = 0;
 
 	m_NextFatigueDamage = 1;
+}
+
+bool TablePlayer::TakeDamage(int dmg)
+{
+	Tools::ltf("Took " + to_string(dmg) + " damage");
+
+	int tmp_dmg = dmg - m_Armor;
+	if (tmp_dmg > 0)
+	{
+		m_Armor = 0;
+		m_Health -= tmp_dmg;
+	}
+	else
+	{
+		m_Armor -= dmg;
+	}
+
+	return false;
+}
+
+bool TablePlayer::TakeFatigueDamage()
+{
+	Tools::ltf("Fatigue");
+	TakeDamage(m_NextFatigueDamage);
+	m_NextFatigueDamage++;
+	return m_Health > 0;
 }
 
 string TablePlayer::toString()

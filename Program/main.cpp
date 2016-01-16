@@ -18,8 +18,6 @@
 
 #include "DBConnector.h"
 
-#define DEBUG_INFO false
-
 using namespace std;
 
 string DisplayAllCards()
@@ -97,6 +95,7 @@ void debugtest()
 		cout << "All Weapons:\n" << DisplayAllWeapons() << endl;
 		cout << "All Decks:\n" << DisplayAllDecks() << endl;
 	}
+
 	cout << "Import summary:\n"
 		<< Card::s_AllCards.size() << "\tCards\n"
 		<< Player::s_AllPlayers.size() << "\tPlayers\n"
@@ -139,30 +138,46 @@ void TheMostImportantPart(int player_id, int deck_id)
 {	
 	CardsCollection player_collection = Player::s_AllPlayers[player_id].GetCollection();
 	Deck player_deck = Deck::s_AllDecks[deck_id];
+	Deck enemy_deck = Deck::s_AllDecks[107];
 
-	cout << "Collection: " << endl << player_collection.toString() << endl;
-	cout << "Deck: " << endl << player_deck.toString() << endl;
+// 	cout << "Collection: " << endl << player_collection.toString(true) << endl;
+// 	cout << "Deck: " << endl << player_deck.CardsCollection::toString(true) << endl;
+// 	cout << "Enemy Deck: " << endl << enemy_deck.CardsCollection::toString(true) << endl;
 
- 	Curve collection_curve = Curve(player_collection);
-	cout << "Collection curve: " << endl << collection_curve.toString() << endl;
+//  Curve collection_curve = Curve(player_collection);
+// 	cout << "Collection curve: " << endl << collection_curve.toString() << endl;
+// 
+// 	Curve deck_curve = Curve(player_deck);
+// 	cout << "Deck curve: " << endl << deck_curve.toString() << endl;
+// 
+// 	GeneticDeckConstructor gdc = DeckConstructor(player_collection, player_deck);
+// 	bool find_curve = false;
+// 	if (find_curve)
+// 	{
+// 		CurveFinder cv = CurveFinder(player_collection, player_deck);
+// 		Curve optimal_curve = cv.FindOptimalCurve();
+// 		cout << "Optimal curve: " << endl << optimal_curve.toString() << endl;
+// 		gdc.m_OptimalCurve = optimal_curve;
+// 	}
+// 
+// 	Deck optimal_deck = gdc.FindOptimalDeck();
 
-	Curve deck_curve = Curve(player_deck);
-	cout << "Deck curve: " << endl << deck_curve.toString() << endl;
+	CardsCollection cc = player_deck;
+	DeckWithSupplement dws = DeckWithSupplement(cc, player_collection);
 
-	DeckConstructor dc = DeckConstructor(player_collection, player_deck);
-	bool find_curve = false;
-	if (find_curve)
-	{
-		CurveFinder cv = CurveFinder(player_collection, player_deck);
-		Curve optimal_curve = cv.FindOptimalCurve();
-		cout << "Optimal curve: " << endl << optimal_curve.toString() << endl;
-		dc.m_OptimalCurve = optimal_curve;
-	}
+	cout << "Collection: " << endl << player_collection.toString(true) << endl;
+	cout << "Deck: " << endl << dws.CardsCollection::toString(true) << endl;
+	cout << "Suplement: " << endl << dws.m_Supplement.CardsCollection::toString(true) << endl;
 
-	Deck optimal_deck = dc.FindOptimalDeck();
+	DeckWithSupplement mutated = GeneticDeckConstructor::Mutation(dws);
 
-	DBConnector::PostOptimalDeck(player_id, player_deck);
+	cout << "Deck: " << endl << mutated.CardsCollection::toString(true) << endl;
+	cout << "Suplement: " << endl << mutated.m_Supplement.CardsCollection::toString(true) << endl;
+
+	//DBConnector::PostOptimalDeck(player_id, enemy_deck);
 }
+
+
 
 int main()
 {
@@ -175,7 +190,7 @@ int main()
 // 	int player_id = ChoosePlayer();
 // 	int deck_id = ChooseDeck(player_id);
 
-	TheMostImportantPart(1, 29);
+	TheMostImportantPart(1, 108);
 
 	system("pause");
 

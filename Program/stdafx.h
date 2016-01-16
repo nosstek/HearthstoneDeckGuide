@@ -12,4 +12,12 @@
 
 #define FORCE_DEBUG_INFO false
 
+#define DEBUG_INFO false
+
+#define LOOP_INFO false
+
+#define FORCE_LOG false
+
+#define LOG false
+
 // TODO: reference additional headers your program requires here
