@@ -165,14 +165,27 @@ void TheMostImportantPart(int player_id, int deck_id)
 	CardsCollection cc = player_deck;
 	DeckWithSupplement dws = DeckWithSupplement(cc, player_collection);
 
+	cout << "Start: " << endl;
 	cout << "Collection: " << endl << player_collection.toString(true) << endl;
-	cout << "Deck: " << endl << dws.CardsCollection::toString(true) << endl;
+	cout << "Deck: " << endl << dws.m_Deck.CardsCollection::toString(true) << endl;
 	cout << "Suplement: " << endl << dws.m_Supplement.CardsCollection::toString(true) << endl;
 
 	DeckWithSupplement mutated = GeneticDeckConstructor::Mutation(dws);
 
-	cout << "Deck: " << endl << mutated.CardsCollection::toString(true) << endl;
+	cout << "Mutated: " << endl;
+	cout << "Deck: " << endl << mutated.m_Deck.CardsCollection::toString(true) << endl;
 	cout << "Suplement: " << endl << mutated.m_Supplement.CardsCollection::toString(true) << endl;
+
+// 	auto result = std::pair<DeckWithSupplement, DeckWithSupplement>(GeneticDeckConstructor::Crossover(dws, mutated));
+// 
+// 	cout << "X1: " << endl;
+// 	cout << "Deck: " << endl << result.first.m_Deck.CardsCollection::toString(true) << endl;
+// 	cout << "Suplement: " << endl << result.first.m_Supplement.CardsCollection::toString(true) << endl;
+// 
+// 	cout << "X2: " << endl;
+// 	cout << "Deck: " << endl << result.second.m_Deck.CardsCollection::toString(true) << endl;
+// 	cout << "Suplement: " << endl << result.second.m_Supplement.CardsCollection::toString(true) << endl;
+
 
 	//DBConnector::PostOptimalDeck(player_id, enemy_deck);
 }

@@ -9,14 +9,14 @@
 class DeckConstructor
 {
 public:
+	static int m_EvaluationPrecision;
+public:
 	CardsCollection m_PlayerCollection;
 	Deck m_PlayerDeck;
 
 	Curve m_OptimalCurve;
 
-	Table m_Table;
-
-	int m_EvaluationPrecision;
+	Table m_Table;	
 public:
 	DeckConstructor() {}
 	DeckConstructor(CardsCollection player_collection);
@@ -32,11 +32,14 @@ public:
 class GeneticDeckConstructor : public DeckConstructor
 {
 public:
-	int m_PopulationSize;
-	int m_GenerationsLimit;
-	double m_MutationChance;
-	double m_CrossoverChance;
+	static int m_PopulationSize;
+	static int m_GenerationsLimit;
+	static double m_MutationChance;
+	static double m_CrossoverChance;
 
+	static int m_MutationLength;
+	static int m_CrossoverLength;
+public:
 	std::vector<std::pair<double,DeckWithSupplement>> m_Population;
 
 	GeneticDeckConstructor();

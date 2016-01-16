@@ -22,6 +22,8 @@ public:
 
 	static Deck GetRandomDeckFromCollection(CardsCollection collection, DeckClass dclass = druid);
 
+	static CardsCollection GetRandomCollectionFromCollection(CardsCollection collection, int collection_elements);
+
 	static bool FlipTheCoin();
 	static double GetRandomPercentage();
 	static int GetRandomInteger(int from, int to);

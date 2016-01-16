@@ -58,7 +58,7 @@ bool CardsCollection::RemoveCard(int id, int quantity)
 	return false;
 }
 
-int CardsCollection::GetRandomCard()
+int CardsCollection::GetRandomCard(bool remove_card)
 {
 	if (DEBUG_INFO) { cout << "Collection size: " << m_Collection.size() << endl; }
 	if (m_Collection.empty())
@@ -69,24 +69,53 @@ int CardsCollection::GetRandomCard()
 	map<int, int>::const_iterator it = m_Collection.begin();
 	advance(it, rand);
 
+	int random_card_id = it->first;
+	if (remove_card)
+		RemoveCard(random_card_id);
+
 	if (DEBUG_INFO) { cout << "Random: " << rand << " Card id: " << it->first << endl; }
 
-	return it->first;
+	return random_card_id;
 }
 
-bool CardsCollection::AddCollection(CardsCollection ccolection)
+bool CardsCollection::AddCollection(CardsCollection ccolection, int number_of_elements)
 {
-	for (map<int, int>::const_iterator it = ccolection.m_Collection.begin(); it != ccolection.m_Collection.end(); ++it)
-		AddCard(it->first, it->second);
+	bool result = true;
+	if (number_of_elements == -1)
+	{
+		for (map<int, int>::const_iterator it = ccolection.m_Collection.begin(); it != ccolection.m_Collection.end(); ++it)
+			result = result * AddCard(it->first, it->second);
+	}
+	else
+	{
+		if (number_of_elements > ccolection.GetCardsCount())
+			return false;
 
-	return true;
+		for (int i = 0; i < number_of_elements; ++i)
+			result = result * AddCard(ccolection.GetRandomCard(true));
+	}
+
+	return result;
 }
 
-bool CardsCollection::RemoveCollection(CardsCollection ccolection)
+bool CardsCollection::RemoveCollection(CardsCollection ccolection, int number_of_elements)
 {
-	for (map<int, int>::const_iterator it = ccolection.m_Collection.begin(); it != ccolection.m_Collection.end(); ++it)
-		RemoveCard(it->first, it->second);
-	return true;
+	bool result = true;
+	if (number_of_elements == -1)
+	{
+		for (map<int, int>::const_iterator it = ccolection.m_Collection.begin(); it != ccolection.m_Collection.end(); ++it)
+			result = result * RemoveCard(it->first, it->second);
+	}
+	else
+	{
+		if (number_of_elements > ccolection.GetCardsCount())
+			return false;
+
+		for (int i = 0; i < number_of_elements; ++i)
+			result = result * RemoveCard(ccolection.GetRandomCard(true));
+	}
+
+	return result;
 }
 
 int CardsCollection::GetCardsCount()
@@ -133,21 +162,24 @@ string Deck::toString() const
 	return s + __super::toString();
 }
 
-DeckWithSupplement::DeckWithSupplement(CardsCollection player_deck, CardsCollection player_collection)
+DeckWithSupplement::DeckWithSupplement(CardsCollection player_deck, CardsCollection player_collection, bool deck_already_substracted_from_collection)
 {
-	m_Collection = player_deck.m_Collection;
-	m_Supplement = Tools::SubtractFromCollectionCollection(player_collection, player_deck);
+	m_Deck.m_Collection = player_deck.m_Collection;
+
+	m_Supplement = deck_already_substracted_from_collection ?
+		player_collection : Tools::SubtractFromCollectionCollection(player_collection, player_deck);
 }
 
-DeckWithSupplement::DeckWithSupplement(Deck player_deck, CardsCollection deck_supplement)
+DeckWithSupplement::DeckWithSupplement(Deck player_deck, CardsCollection player_collection, bool deck_already_substracted_from_collection)
 {
-	m_Collection = player_deck.m_Collection;
-	m_Supplement = deck_supplement;
+	m_Deck = player_deck;
+	m_Supplement = deck_already_substracted_from_collection ?
+		player_collection : Tools::SubtractFromCollectionCollection(player_collection, player_deck);
 }
 
 bool DeckWithSupplement::AddCard(int id, int quantity)
 {
-	if (__super::AddCard(id, quantity))
+	if (m_Deck.AddCard(id, quantity))
 		return m_Supplement.RemoveCard(id, quantity);
 
 	return false;
@@ -155,7 +187,7 @@ bool DeckWithSupplement::AddCard(int id, int quantity)
 
 bool DeckWithSupplement::RemoveCard(int id, int quantity)
 {
-	if (__super::RemoveCard(id, quantity))
+	if (m_Deck.RemoveCard(id, quantity))
 		return m_Supplement.AddCard(id, quantity);
 
 	return false;

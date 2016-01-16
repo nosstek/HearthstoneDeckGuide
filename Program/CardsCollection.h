@@ -14,12 +14,12 @@ public:
 
 	virtual bool AddCard(int id, int quantity = 1);
 	virtual bool RemoveCard(int id, int quantity = 1);
-	int GetRandomCard();
+	int GetRandomCard(bool remove_card = false);
 
 	int GetCardsCount();
 
-	bool AddCollection(CardsCollection ccolection);
-	bool RemoveCollection(CardsCollection ccolection);
+	bool AddCollection(CardsCollection ccolection, int number_of_elements = -1);
+	bool RemoveCollection(CardsCollection ccolection, int number_of_elements = -1);
 	std::map<int, int> GetCollection() { return m_Collection; }
 
 	std::string toString(bool with_cards_details = false) const;
@@ -64,16 +64,17 @@ public:
 	std::string toString() const;
 };
 
-class DeckWithSupplement : public Deck
+class DeckWithSupplement
 {
 public:
+	Deck m_Deck;
 	CardsCollection m_Supplement;
 public:
 	DeckWithSupplement() {};
-	DeckWithSupplement(CardsCollection player_deck, CardsCollection player_collection);
-	DeckWithSupplement(Deck player_deck, CardsCollection deck_supplement);
+	DeckWithSupplement(CardsCollection player_deck, CardsCollection player_collection, bool deck_already_substracted_from_collection = false);
+	DeckWithSupplement(Deck player_deck, CardsCollection player_collection, bool deck_already_substracted_from_collection = false);
 	~DeckWithSupplement() {};
 
-	bool AddCard(int id, int quantity = 1) override;
-	bool RemoveCard(int id, int quantity = 1) override;
+	bool AddCard(int id, int quantity = 1);
+	bool RemoveCard(int id, int quantity = 1);
 };

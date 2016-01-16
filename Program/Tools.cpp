@@ -108,14 +108,22 @@ CardsCollection Tools::SumCollectionWithCollection(CardsCollection collection_fi
 
 Deck Tools::GetRandomDeckFromCollection(CardsCollection collection, DeckClass dclass) //TODO: deck class!
 {
-	Deck random_deck = Deck();
+	Deck random_deck = Deck(GetRandomCollectionFromCollection(collection, CARDS_IN_DECK));
 
-	for (int cards_count = 0; cards_count != CARDS_IN_DECK && !collection.m_Collection.empty(); ++cards_count)
+	return random_deck;
+}
+
+CardsCollection Tools::GetRandomCollectionFromCollection(CardsCollection collection, int collection_elements)
+{
+	CardsCollection random_collection = CardsCollection();
+
+	for (int cards_count = 0; cards_count < collection_elements && !collection.m_Collection.empty(); ++cards_count)
 	{
 		if (DEBUG_INFO) { cout << "Getting #" << cards_count << " random card\n"; }
-		Tools::MoveCardFromCollectionToCollection(&collection, &random_deck);
+		Tools::MoveCardFromCollectionToCollection(&collection, &random_collection);
 	}
-	return random_deck;
+	return random_collection;
+
 }
 
 bool Tools::FlipTheCoin()
