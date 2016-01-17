@@ -6,7 +6,7 @@ class TablePlayer
 {
 public:
 	Deck m_Deck;
-	CardsCollection m_Hand;
+	Collection m_Hand;
 	int m_ActionPoints;
 public:
 	int m_Health;

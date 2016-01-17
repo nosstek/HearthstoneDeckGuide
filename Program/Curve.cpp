@@ -6,16 +6,12 @@ Curve::Curve()
 {
 }
 
-void Curve::SumUpForCurve(CardsCollection collection)
+void Curve::SumUpForCurve(Collection collection)
 {
 	m_Curve.clear();
 
-	for (std::map<int, int>::const_iterator it = collection.m_Collection.begin(); it != collection.m_Collection.end(); ++it)
-	{
-		int card_id = it->first;
-		int cost = GetCardCost(card_id);
-		m_Curve[cost] += it->second;
-	}
+	for (auto it = begin(collection.m_Collection); it != end(collection.m_Collection); ++it)
+		m_Curve[GetCardCost(*it)]++;
 }
 
 double Curve::GetUsabilityFactor(int turn)

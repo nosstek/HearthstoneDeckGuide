@@ -23,7 +23,7 @@ using namespace std;
 string DisplayAllCards()
 {
 	string s;
-	for (map<int, Card>::const_iterator it = Card::s_AllCards.begin(); it != Card::s_AllCards.end(); ++it)
+	for (auto it = Card::s_AllCards.begin(); it != Card::s_AllCards.end(); ++it)
 		s += it->second.toString();
 
 	return s;
@@ -68,7 +68,7 @@ string DisplayAllWeapons()
 string DisplayAllDecks()
 {
 	string s;
-	for (map<int, Deck>::const_iterator it = Deck::s_AllDecks.begin(); it != Deck::s_AllDecks.end(); ++it)
+	for (auto it = Deck::s_AllDecks.begin(); it != Deck::s_AllDecks.end(); ++it)
 		s += it->second.toString();
 
 	return s;
@@ -88,7 +88,7 @@ string DisplayAllPlayerDecks(int player_id)
 void debugtest()
 {
 	if (DEBUG_INFO) {
-		cout << "All Cards:\n" << DisplayAllCards() << endl;
+		cout << "All Cards:\nid\tbc\tname\n" << DisplayAllCards() << endl;
 		cout << "All Players:\n" << DisplayAllPlayers() << endl;
 		cout << "All Effects:\n" << DisplayAllEffects() << endl;
 		cout << "All Minions:\n" << DisplayAllMinions() << endl;
@@ -134,22 +134,73 @@ int ChooseDeck(int player_id)
 	return deck_id;
 }
 
+void MutationTest(int player_id, int deck_id)
+{
+	Collection player_collection = Player::s_AllPlayers[player_id].GetCollection();
+	Collection cc = Deck::s_AllDecks[deck_id];;
+	DeckWithSupplement dws = DeckWithSupplement(cc, player_collection);
+
+	cout << "Start: " << endl;
+	cout << "Collection: " << endl << player_collection.toString(true) << endl;
+	cout << "Deck: " << endl << dws.m_Deck.Collection::toString(true) << endl;
+	cout << "Suplement: " << endl << dws.m_Supplement.Collection::toString(true) << endl;
+
+	DeckWithSupplement mutated = GeneticDeckConstructor::Mutation(dws);
+
+	cout << "Mutated: " << endl;
+	cout << "Deck: " << endl << mutated.m_Deck.Collection::toString(true) << endl;
+	cout << "Suplement: " << endl << mutated.m_Supplement.Collection::toString(true) << endl;
+}
+
+void CrossoverTest(int player_id, int deck_id)
+{
+	Collection player_collection = Player::s_AllPlayers[player_id].GetCollection();
+	Collection cc = Deck::s_AllDecks[deck_id];;
+	DeckWithSupplement dws = DeckWithSupplement(cc, player_collection);
+
+	cout << "Start: " << endl;
+	cout << "Collection: " << endl << player_collection.toString(true) << endl;
+	cout << "Deck: " << endl << dws.m_Deck.Collection::toString(true) << endl;
+	cout << "Suplement: " << endl << dws.m_Supplement.Collection::toString(true) << endl;
+
+	DeckWithSupplement mutated = GeneticDeckConstructor::Mutation(dws);
+
+	cout << "Mutated: " << endl;
+	cout << "Deck: " << endl << mutated.m_Deck.Collection::toString(true) << endl;
+	cout << "Suplement: " << endl << mutated.m_Supplement.Collection::toString(true) << endl;
+
+	auto result = std::pair<DeckWithSupplement, DeckWithSupplement>(GeneticDeckConstructor::Crossover(dws, mutated));
+
+	cout << "X1: " << endl;
+	cout << "Deck: " << endl << result.first.m_Deck.Collection::toString(true) << endl;
+	cout << "Suplement: " << endl << result.first.m_Supplement.Collection::toString(true) << endl;
+
+	cout << "X2: " << endl;
+	cout << "Deck: " << endl << result.second.m_Deck.Collection::toString(true) << endl;
+	cout << "Suplement: " << endl << result.second.m_Supplement.Collection::toString(true) << endl;
+}
+
 void TheMostImportantPart(int player_id, int deck_id)
 {	
-	CardsCollection player_collection = Player::s_AllPlayers[player_id].GetCollection();
+	Collection player_collection = Player::s_AllPlayers[player_id].GetCollection();
 	Deck player_deck = Deck::s_AllDecks[deck_id];
-	Deck enemy_deck = Deck::s_AllDecks[107];
 
-// 	cout << "Collection: " << endl << player_collection.toString(true) << endl;
-// 	cout << "Deck: " << endl << player_deck.CardsCollection::toString(true) << endl;
-// 	cout << "Enemy Deck: " << endl << enemy_deck.CardsCollection::toString(true) << endl;
+//	player_deck = Tools::GetRandomDeckFromCollection(player_collection);
 
-//  Curve collection_curve = Curve(player_collection);
-// 	cout << "Collection curve: " << endl << collection_curve.toString() << endl;
-// 
-// 	Curve deck_curve = Curve(player_deck);
-// 	cout << "Deck curve: " << endl << deck_curve.toString() << endl;
-// 
+	player_deck.SortCollection();
+
+ 	Deck enemy_deck = Deck::s_AllDecks[107];
+ 
+	cout << "Collection: " << endl << player_collection.toString(true) << endl;
+	cout << "Deck: " << endl << player_deck.Collection::toString(true) << endl;
+	cout << "Enemy Deck: " << endl << enemy_deck.Collection::toString(true) << endl;
+
+	Curve collection_curve = Curve(player_collection);
+	cout << "Collection curve: " << endl << collection_curve.toString() << endl;
+
+	Curve deck_curve = Curve(player_deck);
+	cout << "Deck curve: " << endl << deck_curve.toString() << endl;
+//
 // 	GeneticDeckConstructor gdc = DeckConstructor(player_collection, player_deck);
 // 	bool find_curve = false;
 // 	if (find_curve)
@@ -162,33 +213,13 @@ void TheMostImportantPart(int player_id, int deck_id)
 // 
 // 	Deck optimal_deck = gdc.FindOptimalDeck();
 
-	CardsCollection cc = player_deck;
-	DeckWithSupplement dws = DeckWithSupplement(cc, player_collection);
-
-	cout << "Start: " << endl;
-	cout << "Collection: " << endl << player_collection.toString(true) << endl;
-	cout << "Deck: " << endl << dws.m_Deck.CardsCollection::toString(true) << endl;
-	cout << "Suplement: " << endl << dws.m_Supplement.CardsCollection::toString(true) << endl;
-
-	DeckWithSupplement mutated = GeneticDeckConstructor::Mutation(dws);
-
-	cout << "Mutated: " << endl;
-	cout << "Deck: " << endl << mutated.m_Deck.CardsCollection::toString(true) << endl;
-	cout << "Suplement: " << endl << mutated.m_Supplement.CardsCollection::toString(true) << endl;
-
-// 	auto result = std::pair<DeckWithSupplement, DeckWithSupplement>(GeneticDeckConstructor::Crossover(dws, mutated));
-// 
-// 	cout << "X1: " << endl;
-// 	cout << "Deck: " << endl << result.first.m_Deck.CardsCollection::toString(true) << endl;
-// 	cout << "Suplement: " << endl << result.first.m_Supplement.CardsCollection::toString(true) << endl;
-// 
-// 	cout << "X2: " << endl;
-// 	cout << "Deck: " << endl << result.second.m_Deck.CardsCollection::toString(true) << endl;
-// 	cout << "Suplement: " << endl << result.second.m_Supplement.CardsCollection::toString(true) << endl;
+	CrossoverTest(player_id, deck_id);
 
 
-	//DBConnector::PostOptimalDeck(player_id, enemy_deck);
+	DBConnector::PostDeck(player_id, player_deck);
 }
+
+
 
 
 

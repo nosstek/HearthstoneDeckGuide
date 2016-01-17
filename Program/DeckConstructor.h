@@ -11,7 +11,7 @@ class DeckConstructor
 public:
 	static int m_EvaluationPrecision;
 public:
-	CardsCollection m_PlayerCollection;
+	Collection m_PlayerCollection;
 	Deck m_PlayerDeck;
 
 	Curve m_OptimalCurve;
@@ -19,8 +19,8 @@ public:
 	Table m_Table;	
 public:
 	DeckConstructor() {}
-	DeckConstructor(CardsCollection player_collection);
-	DeckConstructor(CardsCollection player_collection, Deck player_deck);
+	DeckConstructor(Collection player_collection);
+	DeckConstructor(Collection player_collection, Deck player_deck);
 	
 	virtual ~DeckConstructor() {}
 

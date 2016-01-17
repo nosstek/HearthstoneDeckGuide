@@ -4,14 +4,21 @@
 #include <fstream>
 #include <string>
 #include <random>
-
-#define DEBUG_INFO false
+#include <algorithm>
 
 #define COIN_ID 16
 
 #define CARDS_IN_DECK 10
 
 using namespace std;
+
+std::mt19937_64 Tools::m_RandomMachine;
+
+bool compareCards(const int &first, const int &second)
+{
+	return first > second;
+}
+
 
 void Tools::initialize()
 {
@@ -37,10 +44,12 @@ void Tools::ClearLogFile()
 	log_file.clear();
 }
 
-int Tools::MoveCardFromCollectionToCollection(CardsCollection* from_collection, CardsCollection* to_collection, int card_id)
+int Tools::MoveCardFromCollectionToCollection(Collection* from_collection, Collection* to_collection, int card_id)
 {
 	if (card_id == -1)
 		card_id = from_collection->GetRandomCard();
+
+	//cout << "Card id: " << card_id << "\n";
 
 	if (card_id > 0)
 	{
@@ -51,7 +60,7 @@ int Tools::MoveCardFromCollectionToCollection(CardsCollection* from_collection, 
 	return card_id;
 }
 
-pair<int, int> Tools::ReplaceCardsBetweenCollections(CardsCollection* collection_first, CardsCollection* collection_second, int card_id_first, int card_id_second)
+pair<int, int> Tools::ReplaceCardsBetweenCollections(Collection* collection_first, Collection* collection_second, int card_id_first, int card_id_second)
 {
 	if (card_id_first == -1)
 		card_id_first = collection_first->GetRandomCard();
@@ -59,7 +68,7 @@ pair<int, int> Tools::ReplaceCardsBetweenCollections(CardsCollection* collection
 	if (card_id_second == -1)
 		card_id_second = collection_second->GetRandomCard();
 
-	pair<int, int> result = pair<int, int>(card_id_first, card_id_second);
+	auto result = pair<int, int>(card_id_first, card_id_second);
 
 	if (card_id_first > 0 && card_id_second > 0)
 	{
@@ -73,64 +82,68 @@ pair<int, int> Tools::ReplaceCardsBetweenCollections(CardsCollection* collection
 	return result;
 }
 
-CardsCollection Tools::GetCommonPartOfTwoCollections(CardsCollection collection_first, CardsCollection collection_second)
+Collection Tools::GetCommonPartOfTwoCollections(Collection collection_first, Collection collection_second)
 {
-	CardsCollection result = CardsCollection();
+	Collection result = Collection();
 
-	for (map<int, int>::const_iterator it = collection_first.m_Collection.begin(); it != collection_first.m_Collection.end(); ++it)
-	{
-		for (int card_quantity = it->second; card_quantity > 0; --card_quantity)
-			if (collection_second.RemoveCard(it->first))
-				result.AddCard(it->first);
-	}
+	//sort(begin(collection_first.m_Collection), end(collection_first.m_Collection));
+	//sort(begin(collection_second.m_Collection), end(collection_second.m_Collection));
+
+	collection_first.m_Collection.sort();
+	collection_second.m_Collection.sort();
+
+
+	for (auto it = begin(collection_first.m_Collection); it != end(collection_first.m_Collection); ++it)
+		if (collection_second.RemoveCard(*it))
+			result.AddCard(*it);
 
 	return result;
 }
 
-CardsCollection Tools::SubtractFromCollectionCollection(CardsCollection collection_first, CardsCollection collection_second)
+Collection Tools::SubtractFromCollectionCollection(Collection collection_first, Collection collection_second)
 {
-	for (map<int, int>::const_iterator it = collection_second.m_Collection.begin(); it != collection_second.m_Collection.end(); ++it)
-	{
-		for (int card_quantity = it->second; card_quantity > 0; --card_quantity)
-			collection_first.RemoveCard(it->first);
-	}
+	//cout << "Pierwsza talia:\n" << collection_first.toString(true) << "Druga talia:\n" << collection_second.toString(true);
+
+	for (auto it = begin(collection_second.m_Collection); it != end(collection_second.m_Collection); ++it)
+		collection_first.RemoveCard(*it);
 
 	return collection_first;
 }
 
-CardsCollection Tools::SumCollectionWithCollection(CardsCollection collection_first, CardsCollection collection_second)
+Collection Tools::SumCollectionWithCollection(Collection collection_first, Collection collection_second)
 {
-	for (map<int, int>::const_iterator it = collection_second.m_Collection.begin(); it != collection_second.m_Collection.end(); ++it)
-		collection_first.AddCard(it->first, it->second);
+	for (auto it = begin(collection_second.m_Collection); it != end(collection_second.m_Collection); ++it)
+		collection_first.AddCard(*it);
 
 	return collection_first;
 }
 
-Deck Tools::GetRandomDeckFromCollection(CardsCollection collection, DeckClass dclass) //TODO: deck class!
+Deck Tools::GetRandomDeckFromCollection(Collection collection, DeckClass dclass) //TODO: deck class!
 {
-	Deck random_deck = Deck(GetRandomCollectionFromCollection(collection, CARDS_IN_DECK));
-
+	Collection random_collection = GetRandomCollectionFromCollection(collection, CARDS_IN_DECK);
+	Deck random_deck = Deck(random_collection);
 	return random_deck;
 }
 
-CardsCollection Tools::GetRandomCollectionFromCollection(CardsCollection collection, int collection_elements)
+Collection Tools::GetRandomCollectionFromCollection(Collection collection, int collection_elements)
 {
-	CardsCollection random_collection = CardsCollection();
+	Collection random_collection = Collection();
 
 	for (int cards_count = 0; cards_count < collection_elements && !collection.m_Collection.empty(); ++cards_count)
 	{
-		if (DEBUG_INFO) { cout << "Getting #" << cards_count << " random card\n"; }
-		Tools::MoveCardFromCollectionToCollection(&collection, &random_collection);
+// 		cout << "CE: " << collection_elements << " CS: " << collection.m_Collection.size() << "\n";
+// 		cout << "Getting #" << cards_count << " random card\n";
+// 		cout << "CM: " << << "\n";
+		Tools::MoveCardFromCollectionToCollection(&collection, &random_collection);	
 	}
 	return random_collection;
-
 }
 
 bool Tools::FlipTheCoin()
 {
 	uniform_int_distribution<int> dist(0, 1);
 	int rand = dist(m_RandomMachine);
-	return rand;
+	return (bool)rand;
 }
 
 double Tools::GetRandomPercentage()
@@ -143,22 +156,11 @@ double Tools::GetRandomPercentage()
 int Tools::GetRandomInteger(int from, int to)
 {
 	uniform_int_distribution<int> dist(from, to);
-	double rand = dist(m_RandomMachine);
+	int rand = dist(m_RandomMachine);
 	return rand;
 }
 
-void Tools::AddCoinToCollection(CardsCollection * to_collection)
+void Tools::AddCoinToCollection(Collection * to_collection)
 {
 	to_collection->AddCard(COIN_ID);
-}
-
-std::mt19937_64 Tools::m_RandomMachine;
-
-Tools::Tools()
-{
-}
-
-
-Tools::~Tools()
-{
 }

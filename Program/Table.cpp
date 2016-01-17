@@ -85,7 +85,7 @@ bool SimpleTable::PlayMatch()
 
 	for (m_Turn = 1; !GameEndConditionFulfilled(); ++m_Turn)
 	{
-		if (LOOP_INFO) log("Turn: " + to_string(m_Turn) + " ###############################");
+		log("Turn: " + to_string(m_Turn) + " ###############################");
 		PlayTurn(m_Turn);
 	}
 	return m_Player.IamAlive();
@@ -93,7 +93,7 @@ bool SimpleTable::PlayMatch()
 
 void SimpleTable::PlayTurn(int turn)
 {
-	if (LOOP_INFO) log("Player's turn -------------------------------------" + m_Player.toString());
+	log("Player's turn -------------------------------------" + m_Player.toString());
 	PlayTurn(m_Player, turn, m_PlayerResult);
 }
 
@@ -101,11 +101,11 @@ void SimpleTable::PlayTurn(TablePlayer & tplayer, int turn, std::map<int, double
 {
 	{ //Start turn;
 		tplayer.m_ActionPoints = turn;
-		if (LOOP_INFO) log(to_string(tplayer.m_ActionPoints) + " action point(s)");
+		log(to_string(tplayer.m_ActionPoints) + " action point(s)");
 
 		DrawRandomCardFromDeckToHand(tplayer);
 
-		if (LOOP_INFO) log("Hand: " + to_string(tplayer.m_Hand.GetCardsCount()) + " Cards\n" + tplayer.m_Hand.toString(true));
+		log("Hand: " + to_string(tplayer.m_Hand.GetCardsCount()) + " Cards\n" + tplayer.m_Hand.toString(true));
 
 		{ // Curve statistics
 			Curve cv = Curve(tplayer.m_Hand);
@@ -120,28 +120,21 @@ void SimpleTable::PlayTurn(TablePlayer & tplayer, int turn, std::map<int, double
 	}
 	if (!GameEndConditionFulfilled())
 	{ // Choose card
-		for (int card_cost = tplayer.m_ActionPoints; card_cost >= 0; --card_cost)
+		for (int card_cost = tplayer.m_ActionPoints; card_cost > 0; --card_cost)
 		{
-			for (map<int, int>::const_iterator it = tplayer.m_Hand.m_Collection.begin(); it != tplayer.m_Hand.m_Collection.end();)
+			for (auto it = begin(tplayer.m_Hand.m_Collection); it != end(tplayer.m_Hand.m_Collection); ++it)
 			{
-				if (Card::s_AllCards[it->first].m_BaseCost == card_cost)
+				if (Card::s_AllCards[*it].m_BaseCost == card_cost)
 				{
 					//TODO: Hero ability
-					int card_id_to_play = it->first;
-					if (tplayer.m_Hand.m_Collection[card_id_to_play] == 1)
-						++it;
+					int card_id_to_play = *it;
 					PlayCard(tplayer, card_id_to_play); //TODO: Optimal card play - now its the most expencive;
 					tplayer.m_ActionPoints -= card_cost;
 					card_cost = tplayer.m_ActionPoints;
 
-					if (LOOP_INFO)
-						log(to_string(tplayer.m_ActionPoints) + " action point(s)\nCard played: "
-							+ Card::s_AllCards[card_id_to_play].toString() +
-							"\nHand: " + to_string(tplayer.m_Hand.GetCardsCount()) + " Cards\n" + tplayer.m_Hand.toString(true));
-				}
-				else
-				{
-					++it;
+					log(to_string(tplayer.m_ActionPoints) + " action point(s)\nCard played: "
+						+ Card::s_AllCards[card_id_to_play].toString() +
+						"\nHand: " + to_string(tplayer.m_Hand.GetCardsCount()) + " Cards\n" + tplayer.m_Hand.toString(true));
 				}
 			}
 			//TODO: if (tplayer.m_ActionPoints ==2) UseHeroAbility();
@@ -179,11 +172,11 @@ double SimpleTable::SummaryResult(map<int, double> result)
 	return summary;
 }
 
-void SimpleTable::DrawRandomCardFromDeckToHand(TablePlayer & tplayer)
+void SimpleTable::DrawRandomCardFromDeckToHand(TablePlayer &tplayer)
 {
 	int card_draw = Tools::MoveCardFromCollectionToCollection(&tplayer.m_Deck, &tplayer.m_Hand);
 
-	if (LOOP_INFO) log("Card draw: " +	(card_draw >= 0 ? Card::s_AllCards[card_draw].toString() : "No card draw"));
+	log("Card draw: " +	(card_draw >= 0 ? Card::s_AllCards[card_draw].toString() : "No card draw"));
 
 	if (card_draw == -1)
 		tplayer.TakeFatigueDamage();
@@ -213,7 +206,7 @@ bool Table::GameEndConditionFulfilled()
 void Table::DrawStartingHand()
 {
 	__super::DrawStartingHand();
-	if (LOOP_INFO) log("Draw enemy's starting hand");
+	log("Draw enemy's starting hand");
 	__super::DrawStartingHand(m_Enemy, !m_ImFirst);
 }
 
@@ -225,7 +218,7 @@ void Table::PlayTurn(int turn)
 	if (GameEndConditionFulfilled())
 		return;
 
-	if (LOOP_INFO) log("Enemy's turn -------------------------------------" + m_Enemy.toString());
+	log("Enemy's turn -------------------------------------" + m_Enemy.toString());
 	__super::PlayTurn(m_Enemy, turn, m_EnemyResult);
 
 	if (GameEndConditionFulfilled())
