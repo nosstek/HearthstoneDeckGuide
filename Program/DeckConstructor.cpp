@@ -6,10 +6,10 @@
 
 #define TESTING_DECK_ID 107
 
-int DeckConstructor::m_EvaluationPrecision = 1;
+int DeckConstructor::m_EvaluationPrecision = 10000;
 
-int GeneticDeckConstructor::m_PopulationSize = 1;
-int GeneticDeckConstructor::m_GenerationsLimit = 1;
+int GeneticDeckConstructor::m_PopulationSize = 10;
+int GeneticDeckConstructor::m_GenerationsLimit = 10;
 double GeneticDeckConstructor::m_MutationChance = 0.3;
 double GeneticDeckConstructor::m_CrossoverChance = 0.3;
 
@@ -148,52 +148,51 @@ Deck GeneticDeckConstructor::GeneticAlghoritmForDeck()
 {
 	if (DEBUG_INFO) { std::cout << "Getting random deck\n"; }
 
-// 	for (int i = 0; i < m_PopulationSize; ++i)
-// 	{
+	for (int i = 0; i < m_PopulationSize; ++i)
+	{
 		DeckWithSupplement random_deck = DeckWithSupplement(Tools::GetRandomDeckFromCollection(m_PlayerCollection), m_PlayerCollection);
-		auto p = pair<double, DeckWithSupplement>(0.0, random_deck); //EvaluationFunction(random_deck.m_Deck), random_deck);
+		random_deck.SortCollection();
+		auto p = pair<double, DeckWithSupplement>(EvaluationFunction(random_deck.m_Deck), random_deck);
 		m_Population.push_back(p);
 
-		cout << random_deck.toString(true) << endl;
+		sort(m_Population.begin(), m_Population.end(), pairCompare);
+	}
 
-//		sort(m_Population.begin(), m_Population.end(), pairCompare);
-// 	}
-// 
-// 	for (int generation = 0; generation < m_GenerationsLimit; ++generation)
-// 	{
-// 		for (int population_member = 0; population_member < m_PopulationSize; ++population_member)
-// 		{
-// 			if (DEBUG_INFO) { cout << "Population member: " << population_member << endl; }
-// 			if (m_CrossoverChance > Tools::GetRandomPercentage())
-// 			{
-// 				if (DEBUG_INFO) { cout << "Crossover!" << population_member << endl; }
-// 				int crossover_with = Tools::GetRandomInteger(0, m_PopulationSize);
-// 				std::pair<DeckWithSupplement, DeckWithSupplement> crossover_decks = Crossover(m_Population[population_member].second, m_Population[crossover_with].second);
-// 				std::pair<double, DeckWithSupplement> deck1 = std::pair<double, DeckWithSupplement>(EvaluationFunction(crossover_decks.first.m_Deck), crossover_decks.first);
-// 				m_Population.push_back(deck1);
-// 
-// 				std::pair<double, DeckWithSupplement> deck2 = std::pair<double, DeckWithSupplement>(EvaluationFunction(crossover_decks.second.m_Deck), crossover_decks.second);
-// 				m_Population.push_back(deck2);
-// 			}
-// 
-// 			if (m_MutationChance > Tools::GetRandomPercentage())
-// 			{
-// 				if (DEBUG_INFO) { cout << "Mutated!" << population_member << endl; }
-// 				DeckWithSupplement mutated_deck = Mutation(m_Population[population_member].second);
-// 				std::pair<double, DeckWithSupplement> mu_deck = std::pair<double, DeckWithSupplement>(EvaluationFunction(mutated_deck.m_Deck), mutated_deck);
-// 				m_Population.push_back(mu_deck);
-// 			}
-// 		}
+	for (int generation = 0; generation < m_GenerationsLimit; ++generation)
+	{
+		for (int population_member = 0; population_member < m_PopulationSize; ++population_member)
+		{
+			if (DEBUG_INFO) { cout << "Population member: " << population_member << endl; }
+			if (m_CrossoverChance > Tools::GetRandomPercentage())
+			{
+				if (DEBUG_INFO) { cout << "Crossover!" << population_member << endl; }
+				int crossover_with = Tools::GetRandomInteger(0, m_PopulationSize);
+				std::pair<DeckWithSupplement, DeckWithSupplement> crossover_decks = Crossover(m_Population[population_member].second, m_Population[crossover_with].second);
+				std::pair<double, DeckWithSupplement> deck1 = std::pair<double, DeckWithSupplement>(EvaluationFunction(crossover_decks.first.m_Deck), crossover_decks.first);
+				m_Population.push_back(deck1);
+
+				std::pair<double, DeckWithSupplement> deck2 = std::pair<double, DeckWithSupplement>(EvaluationFunction(crossover_decks.second.m_Deck), crossover_decks.second);
+				m_Population.push_back(deck2);
+			}
+
+			if (m_MutationChance > Tools::GetRandomPercentage())
+			{
+				if (DEBUG_INFO) { cout << "Mutated!" << population_member << endl; }
+				DeckWithSupplement mutated_deck = Mutation(m_Population[population_member].second);
+				std::pair<double, DeckWithSupplement> mu_deck = std::pair<double, DeckWithSupplement>(EvaluationFunction(mutated_deck.m_Deck), mutated_deck);
+				m_Population.push_back(mu_deck);
+			}
+		}
 
 // 		for (std::vector<std::pair<double, DeckWithSupplement>>::iterator it = m_Population.begin(); it != m_Population.end(); ++it)
 // 		{
 // 			std::pair<double, DeckWithSupplement> p = *it;
 // 			p.first = EvaluationFunction(p.second.m_Deck);
 // 		}
-//		std::sort(m_Population.begin(), m_Population.end(), pairCompare);
-//
-//		m_Population.resize(m_PopulationSize);
-//	}
-	std::cout << std::endl << "Best deck:\n" << m_Population[0].second.m_Deck.toString() << std::endl << m_Population[0].second.m_Deck.Collection::toString(true) << std::endl;
+// 		std::sort(m_Population.begin(), m_Population.end(), pairCompare);
+
+		m_Population.resize(m_PopulationSize);
+	}
+	std::cout << std::endl << "Best deck:\n" << m_Population[0].second.m_Deck.toString(true) << std::endl;
 	return m_Population[0].second.m_Deck;
 }

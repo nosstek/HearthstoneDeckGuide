@@ -12,13 +12,13 @@
 
 #define FORCE_DEBUG_INFO false
 
-#define DEBUG_INFO true
+#define DEBUG_INFO false
 
 #define LOOP_INFO false
 
 #define FORCE_LOG false
 
-#define LOG true
+#define LOG false
 
 
 

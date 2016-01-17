@@ -185,36 +185,33 @@ void TheMostImportantPart(int player_id, int deck_id)
 	Collection player_collection = Player::s_AllPlayers[player_id].GetCollection();
 	Deck player_deck = Deck::s_AllDecks[deck_id];
 
-//	player_deck = Tools::GetRandomDeckFromCollection(player_collection);
-
 	player_deck.SortCollection();
 
  	Deck enemy_deck = Deck::s_AllDecks[107];
  
-	cout << "Collection: " << endl << player_collection.toString(true) << endl;
-	cout << "Deck: " << endl << player_deck.Collection::toString(true) << endl;
-	cout << "Enemy Deck: " << endl << enemy_deck.Collection::toString(true) << endl;
-
+	if (DEBUG_INFO)
+	{
+		cout << "Collection: " << endl << player_collection.toString(true) << endl;
+		cout << "Deck: " << endl << player_deck.Collection::toString(true) << endl;
+		cout << "Enemy Deck: " << endl << enemy_deck.Collection::toString(true) << endl;
+	}
 	Curve collection_curve = Curve(player_collection);
-	cout << "Collection curve: " << endl << collection_curve.toString() << endl;
+	if (DEBUG_INFO) cout << "Collection curve: " << endl << collection_curve.toString() << endl;
 
 	Curve deck_curve = Curve(player_deck);
-	cout << "Deck curve: " << endl << deck_curve.toString() << endl;
-//
-// 	GeneticDeckConstructor gdc = DeckConstructor(player_collection, player_deck);
-// 	bool find_curve = false;
-// 	if (find_curve)
-// 	{
-// 		CurveFinder cv = CurveFinder(player_collection, player_deck);
-// 		Curve optimal_curve = cv.FindOptimalCurve();
-// 		cout << "Optimal curve: " << endl << optimal_curve.toString() << endl;
-// 		gdc.m_OptimalCurve = optimal_curve;
-// 	}
-// 
-// 	Deck optimal_deck = gdc.FindOptimalDeck();
+	if (DEBUG_INFO) cout << "Deck curve: " << endl << deck_curve.toString() << endl;
 
-	CrossoverTest(player_id, deck_id);
+	GeneticDeckConstructor gdc = DeckConstructor(player_collection, player_deck);
+	bool find_curve = false;
+	if (find_curve)
+	{
+		CurveFinder cv = CurveFinder(player_collection, player_deck);
+		Curve optimal_curve = cv.FindOptimalCurve();
+		if (DEBUG_INFO) cout << "Optimal curve: " << endl << optimal_curve.toString() << endl;
+		gdc.m_OptimalCurve = optimal_curve;
+	}
 
+	Deck optimal_deck = gdc.FindOptimalDeck();
 
 	DBConnector::PostDeck(player_id, player_deck);
 }

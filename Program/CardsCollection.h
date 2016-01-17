@@ -81,5 +81,7 @@ public:
 	bool AddCard(int id);
 	bool RemoveCard(int id);
 
+	void SortCollection() { m_Deck.SortCollection(); m_Supplement.SortCollection(); }
+
 	string toString(bool with_cards_details = false) const;
 };
