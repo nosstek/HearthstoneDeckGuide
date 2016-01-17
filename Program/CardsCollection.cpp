@@ -193,7 +193,7 @@ int Collection::GetRandomCard(bool remove_card)
 	return card;
 }
 
-int Collection::GetCardQuantity(int card_id)
+int Collection::GetCardQuantity(int card_id) const
 {
 	return  (int)count(begin(m_Collection), end(m_Collection), card_id);
 }
@@ -244,7 +244,7 @@ bool Collection::RemoveCollection(Collection col, int number_of_elements)
 
 string Collection::toString(bool with_cards_details) const
 {
-	string s = "id\tbc\tname\n";
+	string s = "id\tbc\tname\tcards: " + to_string(GetCardsCount()) + "\n";
 	for (auto it = begin(m_Collection); it != end(m_Collection); ++it)
 		s += (with_cards_details ? Card::s_AllCards[*it].toString() : to_string(*it) + "\n");
 
@@ -257,19 +257,19 @@ Deck::Deck()
 {
 	m_Id = -1;
 	m_Name = "";
-	m_Class = DeckClass::druid;
+	m_Class = none;
 
 	m_Wins = 0;
 	m_Looses = 0;
 }
 
-Deck::Deck(const Collection collection)
+Deck::Deck(const Collection &collection)
 {
 	m_Collection = collection.m_Collection;
 
 	m_Id = -1;
 	m_Name = "";
-	m_Class = DeckClass::druid;
+	m_Class = none;
 
 	m_Wins = 0;
 	m_Looses = 0;

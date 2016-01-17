@@ -19,8 +19,8 @@ public:
 	bool RemoveCard(int card_id);
 	int GetRandomCard(bool remove_card = false);
 
-	int GetCardQuantity(int card_id);
-	int GetCardsCount() { return (int)m_Collection.size(); }
+	int GetCardQuantity(int card_id) const;
+	int GetCardsCount() const { return (int)m_Collection.size(); }
 
 	bool AddCollection(Collection col, int number_of_elements = -1);
 	bool RemoveCollection(Collection col, int number_of_elements = -1);
@@ -42,6 +42,11 @@ enum DeckClass
 	shaman,
 	warlock,
 	warrior,
+	none,
+	
+	_last = none,
+	_first = druid
+
 };
 
 class Deck : public Collection
@@ -57,7 +62,7 @@ public:
 	int m_Looses;
 
 	Deck();
-	Deck(const Collection collection);
+	Deck(const Collection &collection);
 	Deck(int deck_id, std::string name, DeckClass dclass, int wins = 0, int looses = 0);
 	~Deck() {}
 

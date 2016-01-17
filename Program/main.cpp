@@ -180,32 +180,93 @@ void CrossoverTest(int player_id, int deck_id)
 	cout << "Suplement: " << endl << result.second.m_Supplement.Collection::toString(true) << endl;
 }
 
-void TheMostImportantPart(int player_id, int deck_id)
-{	
+void GetClassCollectionFromCollectionTest(Collection collection, DeckClass dclass = none)
+{
+	if (dclass = none)
+	{
+		for (int i = _first; i <= _last; ++i)
+			cout << "Collection for class: " << i << endl << Tools::GetAllCardsForClassFromCollection(collection, (DeckClass)i).toString(true) << endl;
+	}
+	else
+	{
+		cout << "Collection for class: " << dclass << endl << Tools::GetAllCardsForClassFromCollection(collection, dclass).toString(true) << endl;
+	}
+}
+
+void TestSingleBattle(int player_id, int deck_id)
+{
 	Collection player_collection = Player::s_AllPlayers[player_id].GetCollection();
 	Deck player_deck = Deck::s_AllDecks[deck_id];
+	Deck enemy_deck = Deck::s_AllDecks[107];
 
+	Collection player_deck_class_collection = Tools::GetAllCardsForClassFromCollection(player_collection, player_deck.m_Class);
+
+	player_deck_class_collection.SortCollection();
 	player_deck.SortCollection();
+	enemy_deck.SortCollection();
 
- 	Deck enemy_deck = Deck::s_AllDecks[107];
- 
 	if (DEBUG_INFO)
 	{
 		cout << "Collection: " << endl << player_collection.toString(true) << endl;
+		cout << "Class collection: " << endl << player_deck_class_collection.toString(true) << endl;
 		cout << "Deck: " << endl << player_deck.Collection::toString(true) << endl;
 		cout << "Enemy Deck: " << endl << enemy_deck.Collection::toString(true) << endl;
 	}
-	Curve collection_curve = Curve(player_collection);
+	Curve collection_curve = Curve(player_deck_class_collection);
 	if (DEBUG_INFO) cout << "Collection curve: " << endl << collection_curve.toString() << endl;
 
 	Curve deck_curve = Curve(player_deck);
 	if (DEBUG_INFO) cout << "Deck curve: " << endl << deck_curve.toString() << endl;
 
-	GeneticDeckConstructor gdc = DeckConstructor(player_collection, player_deck);
+	GeneticDeckConstructor gdc = DeckConstructor(player_deck_class_collection, player_deck);
 	bool find_curve = false;
 	if (find_curve)
 	{
-		CurveFinder cv = CurveFinder(player_collection, player_deck);
+		CurveFinder cv = CurveFinder(player_deck_class_collection, player_deck);
+		Curve optimal_curve = cv.FindOptimalCurve();
+		if (DEBUG_INFO) cout << "Optimal curve: " << endl << optimal_curve.toString() << endl;
+		gdc.m_OptimalCurve = optimal_curve;
+	}
+
+	GeneticDeckConstructor::s_GenerationsLimit = 0;
+	GeneticDeckConstructor::s_EvaluationPrecision = 1;
+	GeneticDeckConstructor::s_PopulationSize = 1;
+
+	Deck optimal_deck = gdc.FindOptimalDeck();
+
+	//DBConnector::PostDeck(player_id, player_deck);
+}
+
+void TheMostImportantPart(int player_id, int deck_id)
+{	
+	Collection player_collection = Player::s_AllPlayers[player_id].GetCollection();
+	Deck player_deck = Deck::s_AllDecks[deck_id];
+	Deck enemy_deck = Deck::s_AllDecks[107];
+
+	Collection player_deck_class_collection = Tools::GetAllCardsForClassFromCollection(player_collection, player_deck.m_Class);
+
+	player_deck_class_collection.SortCollection();
+	player_deck.SortCollection();
+	enemy_deck.SortCollection();
+
+	if (DEBUG_INFO)
+	{
+		cout << "Collection: " << endl << player_collection.toString(true) << endl;
+		cout << "Class collection: " << endl << player_deck_class_collection.toString(true) << endl;
+		cout << "Deck: " << endl << player_deck.Collection::toString(true) << endl;
+		cout << "Enemy Deck: " << endl << enemy_deck.Collection::toString(true) << endl;
+	}
+	Curve collection_curve = Curve(player_deck_class_collection);
+	if (DEBUG_INFO) cout << "Collection curve: " << endl << collection_curve.toString() << endl;
+
+	Curve deck_curve = Curve(player_deck);
+	if (DEBUG_INFO) cout << "Deck curve: " << endl << deck_curve.toString() << endl;
+
+	GeneticDeckConstructor gdc = DeckConstructor(player_deck_class_collection, player_deck);
+	bool find_curve = false;
+	if (find_curve)
+	{
+		CurveFinder cv = CurveFinder(player_deck_class_collection, player_deck);
 		Curve optimal_curve = cv.FindOptimalCurve();
 		if (DEBUG_INFO) cout << "Optimal curve: " << endl << optimal_curve.toString() << endl;
 		gdc.m_OptimalCurve = optimal_curve;
@@ -213,10 +274,8 @@ void TheMostImportantPart(int player_id, int deck_id)
 
 	Deck optimal_deck = gdc.FindOptimalDeck();
 
-	DBConnector::PostDeck(player_id, player_deck);
+	//DBConnector::PostDeck(player_id, player_deck);
 }
-
-
 
 
 
@@ -231,7 +290,9 @@ int main()
 // 	int player_id = ChoosePlayer();
 // 	int deck_id = ChooseDeck(player_id);
 
-	TheMostImportantPart(1, 108);
+	TestSingleBattle(1, 108);
+
+	//TheMostImportantPart(1, 108);
 
 	system("pause");
 

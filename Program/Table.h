@@ -24,6 +24,9 @@ public:
 	bool FlipTheCoin();
 	void StartGame();
 
+	virtual bool RedrawCondition(TablePlayer &tplayer, int card_id);
+	Collection RedrawStartingHand(TablePlayer &tplayer);
+
 	virtual void DrawStartingHand();
 	void DrawStartingHand(TablePlayer &tplayer, bool am_i_first);
 
@@ -59,6 +62,7 @@ public:
 
 	bool GameEndConditionFulfilled() override;
 
+	bool RedrawCondition(TablePlayer &tplayer, int card_id) override;
 	void DrawStartingHand() override;
 	void PlayTurn(int turn) override;
 

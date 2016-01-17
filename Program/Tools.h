@@ -26,9 +26,11 @@ public:
 
 	Collection SumCollectionWithCollection(Collection collection_first, Collection collection_second);
 
-	static Deck GetRandomDeckFromCollection(Collection collection, DeckClass dclass = druid);
+	static Deck GetRandomDeckFromCollection(Collection collection, DeckClass dclass = none);
 
 	static Collection GetRandomCollectionFromCollection(Collection collection, int collection_elements);
+
+	static Collection GetAllCardsForClassFromCollection(const Collection &collection, DeckClass dclass = none);
 
 	static bool FlipTheCoin();
 	static double GetRandomPercentage();

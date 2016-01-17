@@ -11,7 +11,7 @@
 using namespace std;
 
 // Logger.
-void log(const std::string &text)
+void log(const string &text)
 {
 	Tools::ltf(text);
 }
@@ -50,6 +50,31 @@ void SimpleTable::StartGame()
 	//TODO: Change starting hand = redraw
 }
 
+bool SimpleTable::RedrawCondition(TablePlayer &tplayer, int card_id)
+{
+	Card card = Card::s_AllCards[card_id];
+
+	if (card.m_BaseCost > 3)
+		return true;
+	else
+		return false;
+}
+
+Collection SimpleTable::RedrawStartingHand(TablePlayer &tplayer)
+{
+	Collection cards_to_redraw = Collection();
+	for (auto it = begin(tplayer.m_Hand.m_Collection); it != end(tplayer.m_Hand.m_Collection); ++it)
+	{
+		if (RedrawCondition(tplayer, *it))
+			cards_to_redraw.AddCard(*it);
+	}
+
+	if (cards_to_redraw.GetCardsCount())
+		tplayer.m_Hand.RemoveCollection(cards_to_redraw);
+
+	return cards_to_redraw;
+}
+
 void SimpleTable::DrawStartingHand()
 {
 	log("Draw player's starting hand");
@@ -63,6 +88,27 @@ void SimpleTable::DrawStartingHand(TablePlayer &tplayer, bool am_i_first)
 	log("Cards draw:");
 	for (int i = 0; i < draw_first_cards; ++i)
 		DrawRandomCardFromDeckToHand(tplayer);
+
+	Collection redraw_cards = RedrawStartingHand(tplayer);
+
+	int cards_to_redraw = redraw_cards.GetCardsCount();
+
+	log("Cards to redraw: " + to_string(cards_to_redraw));
+
+	if (cards_to_redraw > 0)
+	{
+		log("Cards redraw:\n" + redraw_cards.toString(true));
+
+		if (LOOP_INFO) log("Player hand:\n" + tplayer.m_Hand.toString(true) + "Cards draw:");
+		for (int i = 0; i < cards_to_redraw; ++i)
+			DrawRandomCardFromDeckToHand(tplayer);
+
+		if (LOOP_INFO) log("Player deck:\n" + tplayer.m_Deck.toString(true) + "Player hand:\n" + tplayer.m_Hand.toString(true));
+
+		tplayer.m_Deck.AddCollection(redraw_cards);
+
+		if (LOOP_INFO) log("Player deck after returning redraw cards:\n" + tplayer.m_Deck.toString(true));
+	}
 
 	if (!am_i_first)
 	{
@@ -78,7 +124,7 @@ bool SimpleTable::GameEndConditionFulfilled()
 
 bool SimpleTable::PlayMatch()
 {
-	if (LOOP_INFO) std::cout << "Playing on the table\n";
+	if (LOOP_INFO) cout << "Playing on the table\n";
 	initialize();
 
 	StartGame();
@@ -97,7 +143,7 @@ void SimpleTable::PlayTurn(int turn)
 	PlayTurn(m_Player, turn, m_PlayerResult);
 }
 
-void SimpleTable::PlayTurn(TablePlayer & tplayer, int turn, std::map<int, double> result)
+void SimpleTable::PlayTurn(TablePlayer & tplayer, int turn, map<int, double> result)
 {
 	{ //Start turn;
 		tplayer.m_ActionPoints = turn;
@@ -112,8 +158,8 @@ void SimpleTable::PlayTurn(TablePlayer & tplayer, int turn, std::map<int, double
 			result[turn] = cv.GetUsabilityFactor(turn);
 			if (LOOP_INFO)
 			{
-				std::cout.precision(5);
-				std::cout << "Turn " << turn << ": " << std::fixed << result[turn] << std::endl << cv.toString() << std::endl;
+				cout.precision(5);
+				cout << "Turn " << turn << ": " << std::fixed << result[turn] << endl << cv.toString() << endl;
 			}
 		}
 
@@ -154,11 +200,11 @@ void SimpleTable::ApplyCardEffect(int card_id_to_play)
 	//TODO: Card effects
 }
 
-std::string SimpleTable::toStringResult(map<int, double> result) 
+string SimpleTable::toStringResult(map<int, double> result) 
 {
-	std::string s;
+	string s;
 	for (map<int, double>::const_iterator it = result.begin(); it != result.end(); ++it)
-		s += std::to_string(it->first) + "\t" + to_string(it->second) + "\n";
+		s += to_string(it->first) + "\t" + to_string(it->second) + "\n";
 
 	return s;
 }
@@ -201,6 +247,11 @@ void Table::initialize()
 bool Table::GameEndConditionFulfilled()
 {
 	return !m_Player.IamAlive() || !m_Enemy.IamAlive();
+}
+
+bool Table::RedrawCondition(TablePlayer & tplayer, int card_id)
+{
+	return __super::RedrawCondition(tplayer, card_id);
 }
 
 void Table::DrawStartingHand()

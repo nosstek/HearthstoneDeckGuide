@@ -6,6 +6,8 @@
 #include <random>
 #include <algorithm>
 
+#include "Card.h"
+
 #define COIN_ID 16
 
 #define CARDS_IN_DECK 10
@@ -26,7 +28,7 @@ void Tools::initialize()
 	m_RandomMachine = mt19937_64(rd());
 }
 
-void Tools::ltf(const string & text)
+void Tools::ltf(const string &text)
 {
 	if (!LOG)
 		return;
@@ -137,6 +139,16 @@ Collection Tools::GetRandomCollectionFromCollection(Collection collection, int c
 		Tools::MoveCardFromCollectionToCollection(&collection, &random_collection);	
 	}
 	return random_collection;
+}
+
+Collection Tools::GetAllCardsForClassFromCollection(const Collection &collection, DeckClass dclass)
+{
+	Collection resuslt = Collection();
+	for (auto it = begin(collection.m_Collection); it != end(collection.m_Collection); ++it)
+		if (Card::s_AllCards[*it].m_Class == none || Card::s_AllCards[*it].m_Class == dclass)
+			resuslt.AddCard(*it);
+
+	return resuslt;
 }
 
 bool Tools::FlipTheCoin()
