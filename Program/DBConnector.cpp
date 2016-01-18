@@ -107,8 +107,12 @@ ResultSet* DBConnector::ProcessPreparedStatement(std::string s, int deck_id)
 	return NULL;
 }
 
-ResultSet* DBConnector::ProcessPreparedStatement(std::string s, int deck_id, CardsCollection optimal_deck)
+ResultSet* DBConnector::ProcessPreparedStatement(std::string s, int deck_id, Deck optimal_deck)
 {
+	//sort(begin(optimal_deck.m_Collection), end(optimal_deck.m_Collection));
+
+	optimal_deck.m_Collection.sort();
+
 	try {
 		Driver *driver;
 		driver = get_driver_instance();
@@ -117,15 +121,16 @@ ResultSet* DBConnector::ProcessPreparedStatement(std::string s, int deck_id, Car
 
 		PreparedStatement *pstmt;
 		pstmt = m_Con->prepareStatement(s);
-		for (int i = 0; i < optimal_deck.m_Collection.size(); ++i)
-		{
-			map<int, int>::const_iterator it = optimal_deck.m_Collection.begin();
-			advance(it, i);
 
+		for (auto it = begin(optimal_deck.m_Collection); it != end(optimal_deck.m_Collection); )
+		{
+			int card_id = *it;
+			int card_quantity = optimal_deck.GetCardQuantity(card_id);
 			pstmt->setInt(1, deck_id);
-			pstmt->setInt(2, it->first);
-			pstmt->setInt(3, it->second);
+			pstmt->setInt(2, card_id);
+			pstmt->setInt(3, card_quantity);
 			pstmt->executeUpdate();
+			advance(it, card_quantity);
 		}
 	}
 	catch (SQLException &e) {
@@ -297,7 +302,8 @@ bool DBConnector::ImportPlayerCollection(Player& p)
 		int card_id = res->getInt("Card_id");
 		int card_quantity = res->getInt("card_quantity");
 
-		p.m_Collection.AddCard(card_id, card_quantity);
+		for (int i = 0; i < card_quantity; ++i)
+			p.m_Collection.AddCard(card_id);
 	}
 	delete res;
 
@@ -354,7 +360,8 @@ bool DBConnector::ImportAllDecksFromDatabase()
 		int card_id = res->getInt("Card_id");
 		int card_quantity = res->getInt("card_quantity");
 
-		Deck::s_AllDecks[deck_id].AddCard(card_id, card_quantity);
+		for (int i = 0; i < card_quantity; ++i)
+			Deck::s_AllDecks[deck_id].AddCard(card_id);
 	}
 	delete res;
 
@@ -401,7 +408,7 @@ bool DBConnector::ImportAllFromDatabase()
 	return true;
 }
 
-bool DBConnector::PostOptimalDeck(int player_id, CardsCollection optimal_deck) //TODO: This is ugly...
+bool DBConnector::PostDeck(int player_id, Deck optimal_deck) //TODO: This is ugly...
 {
 
 	string s = "SELECT * FROM  `Deck` WHERE (`Deck`.`Player_id` = " + to_string(player_id) + " AND `Deck`.`name` = 'GuideDeck')";

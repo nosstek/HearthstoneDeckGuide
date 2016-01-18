@@ -9,9 +9,9 @@
 class DeckConstructor
 {
 public:
-	static int m_EvaluationPrecision;
+	static int s_EvaluationPrecision;
 public:
-	CardsCollection m_PlayerCollection;
+	Collection m_PlayerCollection;
 	Deck m_PlayerDeck;
 
 	Curve m_OptimalCurve;
@@ -19,8 +19,8 @@ public:
 	Table m_Table;	
 public:
 	DeckConstructor() {}
-	DeckConstructor(CardsCollection player_collection);
-	DeckConstructor(CardsCollection player_collection, Deck player_deck);
+	DeckConstructor(Collection player_collection);
+	DeckConstructor(Collection player_collection, Deck player_deck);
 	
 	virtual ~DeckConstructor() {}
 
@@ -32,13 +32,13 @@ public:
 class GeneticDeckConstructor : public DeckConstructor
 {
 public:
-	static int m_PopulationSize;
-	static int m_GenerationsLimit;
-	static double m_MutationChance;
-	static double m_CrossoverChance;
+	static int s_PopulationSize;
+	static int s_GenerationsLimit;
+	static double s_MutationChance;
+	static double s_CrossoverChance;
 
-	static int m_MutationLength;
-	static int m_CrossoverLength;
+	static int s_MutationLength;
+	static int s_CrossoverLength;
 public:
 	std::vector<std::pair<double,DeckWithSupplement>> m_Population;
 

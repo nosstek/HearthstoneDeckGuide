@@ -46,7 +46,10 @@ public:
 		shaman,
 		warlock,
 		warrior,
-		none
+		none,
+
+		_last = none,
+		_first = druid
 	};
 
 	CardClass m_Class;

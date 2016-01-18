@@ -5,23 +5,21 @@
 #include "CurveFinder.h"
 #include "Card.h"
 
-#define DEBUG_INFO false
-
-CardsCollection CurveFinder::m_Collection;
+Collection CurveFinder::m_Collection;
 Deck CurveFinder::m_Deck;
 
 CurveFinder::CurveFinder()
 {
 }
 
-CurveFinder::CurveFinder(CardsCollection player_collection)
+CurveFinder::CurveFinder(Collection player_collection)
 {
 	m_Collection = player_collection;
 
 	m_Deck.m_Collection.clear();
 }
 
-CurveFinder::CurveFinder(CardsCollection player_collection, Deck player_deck)
+CurveFinder::CurveFinder(Collection player_collection, Deck player_deck)
 {
 	m_Collection = player_collection;
 	m_Deck = player_deck;

@@ -6,14 +6,14 @@
 class CurveFinder
 {
 public:
-	static CardsCollection m_Collection;
+	static Collection m_Collection;
 	static Deck m_Deck;
 
 	SimpleTable m_Table;
 
 	CurveFinder();
-	CurveFinder(CardsCollection player_collection);
-	CurveFinder(CardsCollection player_collection, Deck player_deck);
+	CurveFinder(Collection player_collection);
+	CurveFinder(Collection player_collection, Deck player_deck);
 	virtual ~CurveFinder();
 
 	Curve FindOptimalCurve();

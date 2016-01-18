@@ -13,11 +13,11 @@ Player::Player(int pid, std::string pname)
 	m_Name = pname;
 }
 
-Player::Player(int pid, std::string pname, CardsCollection pcollection)
+Player::Player(int pid, std::string pname, Collection collection)
 {
 	m_Id = pid;
 	m_Name = pname;
-	m_Collection = pcollection;
+	m_Collection = collection;
 }
 
 Player::~Player()
@@ -32,8 +32,8 @@ std::string Player::toString(bool with_collection) const
 	return s;
 }
 
-CardsCollection Player::GetDeck()
+Deck Player::GetDeck()
 {
-	std::map<int, std::string>::const_iterator it = m_Deck.begin();
+	auto it = m_Deck.begin();
 	return Deck::s_AllDecks[it->first];
 }

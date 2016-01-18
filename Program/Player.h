@@ -13,20 +13,20 @@ public:
 
 	int m_Id;
 	std::string m_Name;
-	CardsCollection m_Collection;
+	Collection m_Collection;
 	std::map<int, std::string> m_Deck;
 	Deck m_ResultDeck;
 
 public:
 	Player();
 	Player(int pid, std::string pname);
-	Player(int pid, std::string pname, CardsCollection pcollection);
+	Player(int pid, std::string pname, Collection collection);
 	~Player();
 
 	std::string toString(bool with_collection = false) const;
 
-	CardsCollection GetCollection() { return m_Collection; }
-	CardsCollection GetDeck();
+	Collection GetCollection() { return m_Collection; }
+	Deck GetDeck();
 	void SetResultDeck(Deck result) { m_ResultDeck = result; }
 };
 

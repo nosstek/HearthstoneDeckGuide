@@ -1,28 +1,33 @@
 #pragma once
 
 #include <map>
-#include <vector>
 #include <random>
+#include <list>
 
-class CardsCollection
+using namespace std;
+
+class Collection
 {
 public:
-	std::map<int, int> m_Collection;
-public:
-	CardsCollection() { m_Collection.clear(); }
-	virtual ~CardsCollection() {}
+	list<int> m_Collection;
 
-	virtual bool AddCard(int id, int quantity = 1);
-	virtual bool RemoveCard(int id, int quantity = 1);
+public:
+	Collection() { m_Collection.clear(); }
+	~Collection() {}
+
+	bool AddCard(int card_id);
+	bool RemoveCard(int card_id);
 	int GetRandomCard(bool remove_card = false);
 
-	int GetCardsCount();
+	int GetCardQuantity(int card_id) const;
+	int GetCardsCount() const { return (int)m_Collection.size(); }
 
-	bool AddCollection(CardsCollection ccolection, int number_of_elements = -1);
-	bool RemoveCollection(CardsCollection ccolection, int number_of_elements = -1);
-	std::map<int, int> GetCollection() { return m_Collection; }
+	bool AddCollection(Collection col, int number_of_elements = -1);
+	bool RemoveCollection(Collection col, int number_of_elements = -1);
+	
+	void SortCollection() { m_Collection.sort(); }
 
-	std::string toString(bool with_cards_details = false) const;
+	virtual string toString(bool with_cards_details = false) const;
 
 };
 
@@ -37,44 +42,51 @@ enum DeckClass
 	shaman,
 	warlock,
 	warrior,
+	none,
+	
+	_last = none,
+	_first = druid
+
 };
 
-class Deck : public CardsCollection
+class Deck : public Collection
 {
 public:
-	static std::map<int, Deck> s_AllDecks;
+	static map<int, Deck> s_AllDecks;
 
 public:
 	int m_Id;
-	std::string m_Name;
+	string m_Name;
 	DeckClass m_Class;
-
 	int m_Wins;
 	int m_Looses;
 
-public:
-
-	Deck() { m_Collection.clear(); }
+	Deck();
+	Deck(const Collection &collection);
 	Deck(int deck_id, std::string name, DeckClass dclass, int wins = 0, int looses = 0);
-	Deck(CardsCollection cc) { m_Collection = cc.m_Collection; }
 	~Deck() {}
 
 	double GetWinRatio() const;
 
-	std::string toString() const;
+	string toString(bool with_cards_details = false) const override;
+
 };
 
 class DeckWithSupplement
 {
 public:
 	Deck m_Deck;
-	CardsCollection m_Supplement;
+	Collection m_Supplement;
 public:
 	DeckWithSupplement() {};
-	DeckWithSupplement(CardsCollection player_deck, CardsCollection player_collection, bool deck_already_substracted_from_collection = false);
-	DeckWithSupplement(Deck player_deck, CardsCollection player_collection, bool deck_already_substracted_from_collection = false);
+	DeckWithSupplement(Collection player_deck, Collection player_collection, bool deck_already_substracted_from_collection = false);
+	DeckWithSupplement(Deck player_deck, Collection player_collection, bool deck_already_substracted_from_collection = false);
 	~DeckWithSupplement() {};
 
-	bool AddCard(int id, int quantity = 1);
-	bool RemoveCard(int id, int quantity = 1);
+	bool AddCard(int id);
+	bool RemoveCard(int id);
+
+	void SortCollection() { m_Deck.SortCollection(); m_Supplement.SortCollection(); }
+
+	string toString(bool with_cards_details = false) const;
 };
